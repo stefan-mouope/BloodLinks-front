@@ -1,0 +1,6 @@
+/home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLink/android/app/.cxx/Debug/5q71223b/x86/CMakeFiles/appmodules.dir
+/home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLink/android/app/.cxx/Debug/5q71223b/x86/CMakeFiles/edit_cache.dir
+/home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLink/android/app/.cxx/Debug/5q71223b/x86/CMakeFiles/rebuild_cache.dir
+/home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLink/android/app/.cxx/Debug/5q71223b/x86/safeareacontext_autolinked_build/CMakeFiles/react_codegen_safeareacontext.dir
+/home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLink/android/app/.cxx/Debug/5q71223b/x86/safeareacontext_autolinked_build/CMakeFiles/edit_cache.dir
+/home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLink/android/app/.cxx/Debug/5q71223b/x86/safeareacontext_autolinked_build/CMakeFiles/rebuild_cache.dir
