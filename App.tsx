@@ -17,7 +17,7 @@ function App() {
   const handleSignUp = (data: SignUpFormData) => {
     console.log('Sign up data:', data);
     // TODO: Implement actual sign up logic
-    // This would typically involve API calls to your backend
+    // This would typically involve API calls to your backend test
   };
 
   return (
