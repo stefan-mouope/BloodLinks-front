@@ -1,45 +1,38 @@
 /**
- * Sample React Native App
- * https://github.com/facebook/react-native
+ * BloodLinks - Blood Donation Platform
+ * React Native App test
  *
  * @format
  */
 
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+import React from 'react';
+import { StatusBar, useColorScheme } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import SignUpScreen from './src/screens/Auth/SignUpScreen';
+import { SignUpFormData } from './src/types';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
 
+  const handleSignUp = (data: SignUpFormData) => {
+    console.log('Sign up data:', data);
+    // TODO: Implement actual sign up logic
+    // This would typically involve API calls to your backend test
+  };
+
   return (
     <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
+      <StatusBar 
+        barStyle={isDarkMode ? 'light-content' : 'dark-content'} 
+        backgroundColor="transparent"
+        translucent
+      />
+      <SignUpScreen 
+        onSubmit={handleSignUp}
+        loading={false}
+      />
     </SafeAreaProvider>
   );
 }
-
-function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
-
-  return (
-    <View style={styles.container}>
-      <NewAppScreen
-        templateFileName="App.tsx"
-        safeAreaInsets={safeAreaInsets}
-      />
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
 
 export default App;
