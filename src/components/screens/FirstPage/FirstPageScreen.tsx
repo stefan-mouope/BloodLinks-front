@@ -6,7 +6,7 @@ export const FirstPageScreen = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>BloodLink</Text>
-      <Text style={styles.subtitle}>Sauver des vies, une goutte à la fois</Text>
+      <Text style={styles.subtitle}>Donner du sang, sauver des vies. </Text>
       <TouchableOpacity style={styles.button}>
         <Text style={styles.buttonText}>Commencer</Text>
       </TouchableOpacity>
