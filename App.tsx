@@ -1,6 +1,6 @@
 /**
  * BloodLinks - Blood Donation Platform
- * React Native App
+ * React Native App test
  *
  * @format
  */
