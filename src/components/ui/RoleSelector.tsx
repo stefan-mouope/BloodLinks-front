@@ -16,36 +16,29 @@ const RoleSelector: React.FC<RoleSelectorProps> = ({
     { type: 'donneur', title: 'Donneur' },
   ];
 
-  const getContainerStyle = (): ViewStyle => {
-    return {
-      marginBottom: responsiveSize(theme.spacing.lg),
-      ...style,
-    };
-  };
+  const getContainerStyle = (): ViewStyle => ({
+    marginBottom: responsiveSize(theme.spacing.lg),
+    ...style,
+  });
 
-  const getLabelStyle = (): TextStyle => {
-    return {
-      fontSize: responsiveFontSize(theme.typography.fontSize.base),
-      fontWeight: theme.typography.fontWeight.semiBold,
-      color: theme.colors.textPrimary,
-      marginBottom: responsiveSize(theme.spacing.md),
-      textAlign: 'left',
-    };
-  };
+  const getLabelStyle = (): TextStyle => ({
+    fontSize: responsiveFontSize(theme.typography.fontSize.base),
+    fontWeight: theme.typography.fontWeight.semiBold,
+    color: theme.colors.textPrimary,
+    marginBottom: responsiveSize(theme.spacing.md),
+    textAlign: 'left' as const, // Typage explicite pour éviter les erreurs
+  });
 
-  const getRolesContainerStyle = (): ViewStyle => {
-    return {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'stretch',
-      width: dynamicWidth(90, 300, 400),
-    };
-  };
+  const getRolesContainerStyle = (): ViewStyle => ({
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'stretch',
+    width: dynamicWidth(90, 300, 400), // Ajustement basé sur la taille de l'écran
+  });
 
   return (
     <View style={getContainerStyle()}>
-      <Text style={getLabelStyle()}>Select Your Role</Text>
-      
+      <Text style={getLabelStyle()}>Sélectionnez votre rôle</Text> {/* Changé en français */}
       <View style={getRolesContainerStyle()}>
         {roles.map((role) => (
           <RoleCard

@@ -8,7 +8,7 @@ import {
   TextInputProps,
 } from 'react-native';
 import { theme } from '../../constants/theme';
-import { InputProps } from '../../types';
+import { InputProps, InputSize } from '../../types';
 import { responsiveSize, responsiveFontSize, dynamicWidth } from '../../utils/responsive';
 
 const Input: React.FC<InputProps> = ({

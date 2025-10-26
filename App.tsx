@@ -1,25 +1,10 @@
 import React from 'react';
 import { StatusBar, useColorScheme } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import SignUpScreen from './src/screens/Auth/SignUpScreen';
-import { SignUpFormData } from './src/types';
-import { FirstPageScreen } from './src/components/screens';
-
-/**
- * BloodLinks - Blood Donation Platform
- * React Native App
- *
- * @format
- */
+import AppNavigation from './src/Navigation/AppNavigation';
 
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
-
-  const handleSignUp = (data: SignUpFormData) => {
-    console.log('Sign up data:', data);
-    // TODO: Implement actual sign up logic
-    // This would typically involve API calls to your backend
-  };
 
   return (
     <SafeAreaProvider>
@@ -28,10 +13,7 @@ const App = () => {
         backgroundColor="transparent"
         translucent
       />
-      <SignUpScreen
-        onSubmit={handleSignUp}
-        loading={false}
-      />
+      <AppNavigation />
     </SafeAreaProvider>
   );
 };
