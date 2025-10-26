@@ -11,6 +11,9 @@ import DoctorPage from '../screens/DoctorPage/DoctorPage.tsx';
 import CreateRequestScreen from '../screens/DoctorPage/CreateRequestScreen.tsx';
 import BloodBankDashboard from '../screens/BloodBank/BloodBankDashboard.tsx';
 import DonorDashboard from '../screens/DonneurPage/DonorDashboard.tsx';
+import DoctorProfileScreen from '../screens/profiles/DoctorProfileScreen.tsx';
+import DonorProfileScreen from '../screens/profiles/DonorProfileScreen.tsx';
+import BankProfileScreen from '../screens/profiles/BankProfileScreen.tsx';
 
 const Stack = createStackNavigator<RootStackParamList>();
 const myOnSubmitFunction = (data: any) => {
@@ -61,6 +64,26 @@ const AppNavigation = () => {
           name="donor"
           component={DonorDashboard }
         />
+
+       <Stack.Screen
+          name="donorprofile"
+          component={ DonorProfileScreen}
+        />
+
+       <Stack.Screen
+          name="doctorprofile"
+          component={ DoctorProfileScreen}
+        />
+       <Stack.Screen
+          name="bankprofile"
+          component={ BankProfileScreen}
+        />
+
+
+
+
+
+
 
       </Stack.Navigator>
     </NavigationContainer>

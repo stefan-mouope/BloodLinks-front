@@ -169,6 +169,8 @@ const styles = StyleSheet.create({
     color: theme.colors.textPrimary,
     marginBottom: theme.spacing.sm,
     textAlign: 'center',
+    fontWeight:theme.typography.fontWeight.bold
+    
   },
   subtitle: {
     fontSize: theme.typography.fontSize.base,

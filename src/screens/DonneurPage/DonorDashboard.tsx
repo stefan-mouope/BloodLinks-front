@@ -1,3 +1,4 @@
+// screens/DonorDashboard.tsx
 import React, { useState } from 'react';
 import {
   View,
@@ -10,7 +11,6 @@ import {
   Alert,
 } from 'react-native';
 import { theme } from '../../constants/theme';
-
 
 interface AlertItem {
   id: string;
@@ -87,9 +87,6 @@ const DonorDashboard = ({ navigation }: any) => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={theme.colors.primary} />
-
-
-      {/* Contribution Card */}
       <View style={styles.contributionCard}>
         <View style={styles.contributionHeader}>
           <Text style={{ fontSize: 32, marginRight: 8 }}>❤️</Text>
@@ -102,11 +99,8 @@ const DonorDashboard = ({ navigation }: any) => {
           Prochain don disponible dans 45 jours
         </Text>
       </View>
-
-      {/* Content */}
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <Text style={styles.sectionTitle}>Alertes reçues</Text>
-
         {alerts.map((alert) => {
           const urgencyColors = getUrgencyColor(alert.urgency);
           return (
@@ -129,8 +123,6 @@ const DonorDashboard = ({ navigation }: any) => {
                   <Text style={styles.infoText}>🩸 {alert.units} unités requises</Text>
                 </View>
               </View>
-
-              {/* Action Buttons */}
               <View style={styles.actionButtons}>
                 <TouchableOpacity
                   style={styles.acceptButton}
@@ -150,8 +142,6 @@ const DonorDashboard = ({ navigation }: any) => {
             </View>
           );
         })}
-
-        {/* Empty State */}
         {alerts.length === 0 && (
           <View style={styles.emptyState}>
             <Text style={{ fontSize: 64 }}>🔕</Text>
@@ -162,12 +152,13 @@ const DonorDashboard = ({ navigation }: any) => {
           </View>
         )}
       </ScrollView>
-
-      {/* Bottom Navigation */}
       <View style={styles.bottomNav}>
         <TouchableOpacity
           style={styles.navItem}
-          onPress={() => setActiveTab('alertes')}
+          onPress={() => {
+            setActiveTab('alertes');
+            navigation.navigate('DonorDashboard');
+          }}
         >
           <Text style={{ fontSize: 24 }}>🔔</Text>
           <Text
@@ -181,7 +172,10 @@ const DonorDashboard = ({ navigation }: any) => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navItem}
-          onPress={() => setActiveTab('historique')}
+          onPress={() => {
+            setActiveTab('historique');
+            navigation.navigate('History');
+          }}
         >
           <Text style={{ fontSize: 24 }}>⏱️</Text>
           <Text
@@ -195,7 +189,10 @@ const DonorDashboard = ({ navigation }: any) => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navItem}
-          onPress={() => setActiveTab('profil')}
+          onPress={() => {
+            setActiveTab('profil');
+            navigation.navigate('donorprofile');
+          }}
         >
           <Text style={{ fontSize: 24 }}>👤</Text>
           <Text

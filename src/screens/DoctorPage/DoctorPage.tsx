@@ -1,9 +1,8 @@
-import React from 'react';
+// screens/DoctorPage.tsx
+import React, { useState } from 'react';
 import { SafeAreaView, ScrollView, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { theme } from '../../constants/theme';
-import BottomTabs from '../../components/ui/BottomTabs';
 import { useNavigation } from '@react-navigation/native';
-
 
 interface Request {
   id: string;
@@ -15,6 +14,9 @@ interface Request {
 }
 
 const DoctorPage = () => {
+  const navigation = useNavigation<any>();
+  const [activeTab, setActiveTab] = useState('Accueil');
+
   const requests: Request[] = [
     { id: '1', bloodType: 'A+', hospital: 'Hôpital Central', units: 2, status: 'En attente', urgency: 'Urgent' },
     { id: '2', bloodType: 'O-', hospital: 'Clinique Nord', units: 3, status: 'En cours', urgency: 'Critique' },
@@ -37,28 +39,23 @@ const DoctorPage = () => {
       default: return theme.colors.gray600;
     }
   };
-  const navigation = useNavigation<any>();
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.content}>
         <View style={styles.buttonContainer}>
-        <TouchableOpacity
+          <TouchableOpacity
             style={styles.createButton}
             onPress={() => navigation.navigate('CreateRequest')}
-        >
-            <Text style={{ color: theme.colors.white, fontSize: 24, marginRight: 8 }}>＋</Text>
+          >
+            <Text style={{ color: theme.colors.white, fontSize: 24, marginRight: 8 }}>➕</Text>
             <Text style={styles.createButtonText}>Créer une nouvelle requête</Text>
-        </TouchableOpacity>
+          </TouchableOpacity>
         </View>
-
-
         <Text style={styles.sectionTitle}>Mes requêtes</Text>
-
         {requests.map((request) => {
           const urgencyColors = getUrgencyColor(request.urgency);
           const statusColor = getStatusColor(request.status);
-
           return (
             <View key={request.id} style={styles.card}>
               <View style={styles.cardHeader}>
@@ -77,14 +74,59 @@ const DoctorPage = () => {
           );
         })}
       </ScrollView>
-
-      <BottomTabs
-        tabs={[
-          { label: 'Accueil', onPress: () => console.log('Accueil'), active: true },
-          { label: 'Historique', onPress: () => console.log('Historique') },
-          { label: 'Profil', onPress: () => console.log('Profil') },
-        ]}
-      />
+      <View style={styles.bottomNav}>
+        <TouchableOpacity
+          style={styles.navItem}
+          onPress={() => {
+            setActiveTab('Accueil');
+            navigation.navigate('DoctorPage');
+          }}
+        >
+          <Text style={{ fontSize: 24 }}>🏠</Text>
+          <Text
+            style={[
+              styles.navText,
+              activeTab === 'Accueil' && { color: theme.colors.primary },
+            ]}
+          >
+            Accueil
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.navItem}
+          onPress={() => {
+            setActiveTab('Historique');
+            navigation.navigate('History');
+          }}
+        >
+          <Text style={{ fontSize: 24 }}>⏱️</Text>
+          <Text
+            style={[
+              styles.navText,
+              activeTab === 'Historique' && { color: theme.colors.primary },
+            ]}
+          >
+            Historique
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.navItem}
+          onPress={() => {
+            setActiveTab('Profil');
+            navigation.navigate('doctorprofile');
+          }}
+        >
+          <Text style={{ fontSize: 24 }}>👤</Text>
+          <Text
+            style={[
+              styles.navText,
+              activeTab === 'Profil' && { color: theme.colors.primary },
+            ]}
+          >
+            Profil
+          </Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
@@ -93,60 +135,76 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: theme.colors.background },
   content: { flex: 1 },
   buttonContainer: { padding: theme.spacing.md },
-  createButton: { 
-    backgroundColor: theme.colors.primary, 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    justifyContent: 'center', 
-    paddingVertical: theme.spacing.md, 
-    borderRadius: theme.borderRadius.lg, 
-    gap: theme.spacing.sm 
+  createButton: {
+    backgroundColor: theme.colors.primary,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: theme.spacing.md,
+    borderRadius: theme.borderRadius.lg,
+    gap: theme.spacing.sm,
   },
-  createButtonText: { 
-    color: theme.colors.white, 
-    fontWeight: '600', 
-    marginLeft: 8 
+  createButtonText: {
+    color: theme.colors.white,
+    fontWeight: '600',
+    marginLeft: 8,
   },
-  sectionTitle: { 
-    fontSize: theme.typography.fontSize.lg, 
-    fontWeight: 'bold', 
-    padding: theme.spacing.md 
+  sectionTitle: {
+    fontSize: theme.typography.fontSize.lg,
+    fontWeight: 'bold',
+    padding: theme.spacing.md,
   },
-  card: { 
-    backgroundColor: theme.colors.white, 
-    marginHorizontal: theme.spacing.md, 
-    marginBottom: theme.spacing.md, 
-    padding: theme.spacing.md, 
+  card: {
+    backgroundColor: theme.colors.white,
+    marginHorizontal: theme.spacing.md,
+    marginBottom: theme.spacing.md,
+    padding: theme.spacing.md,
     borderRadius: theme.borderRadius.lg,
     borderWidth: 1,
     borderColor: theme.colors.gray300,
-    // Shadow pour iOS
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
-    // Shadow pour Android
     elevation: 4,
   },
-  cardHeader: { 
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
-    alignItems: 'center', 
-    marginBottom: theme.spacing.sm 
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: theme.spacing.sm,
   },
-  urgencyBadge: { 
-    paddingHorizontal: theme.spacing.md, 
-    paddingVertical: theme.spacing.xs, 
-    borderRadius: theme.borderRadius.full 
+  urgencyBadge: {
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.xs,
+    borderRadius: theme.borderRadius.full,
   },
   hospital: { fontSize: 14, marginBottom: 4 },
   units: { fontSize: 12, color: theme.colors.textSecondary, marginBottom: theme.spacing.sm },
-  cardFooter: { 
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
-    alignItems: 'center' 
+  cardFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   status: { fontWeight: '600' },
+  bottomNav: {
+    flexDirection: 'row',
+    backgroundColor: theme.colors.white,
+    borderTopWidth: 1,
+    borderTopColor: theme.colors.border,
+    paddingVertical: theme.spacing.md,
+    paddingHorizontal: theme.spacing.md,
+    justifyContent: 'space-around',
+  },
+  navItem: {
+    alignItems: 'center',
+    gap: 4,
+  },
+  navText: {
+    fontSize: theme.typography.fontSize.xs,
+    color: theme.colors.textSecondary,
+    marginTop: 2,
+  },
 });
 
 export default DoctorPage;
