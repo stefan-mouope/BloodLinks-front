@@ -5,8 +5,18 @@ export type RootStackParamList = {
   FirstPage: undefined;
   Login: undefined;
   SignUp: undefined;
+  DoctorPage: undefined;
+  CreateRequest:undefined;
+  bloodbank:undefined;
+  donor: undefined;
 };
 
 export type FirstPageScreenRouteProp = RouteProp<RootStackParamList, 'FirstPage'>;
 export type LoginScreenRouteProp = RouteProp<RootStackParamList, 'Login'>;
 export type SignUpScreenRouteProp = RouteProp<RootStackParamList, 'SignUp'>;
+export type DoctorPageRouteProp = RouteProp<RootStackParamList, 'DoctorPage'>;
+export type CreateRequestScreenPageRouteProp = RouteProp<RootStackParamList, 'CreateRequest'>;
+export type bloodbankRouteProp = RouteProp<RootStackParamList, 'bloodbank'>;
+export type donorRouteProp = RouteProp<RootStackParamList, 'donor'>;
+
+

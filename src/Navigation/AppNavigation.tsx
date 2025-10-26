@@ -7,6 +7,10 @@ import { RootStackParamList } from '../screens/FirstPage/types.ts';
 import FirstPageScreen from '../screens/FirstPage/FirstPageScreen.tsx';
 import Header from '../components/ui/Header';
 import SignUpScreen from '../screens/Auth/SignUpScreen.tsx';
+import DoctorPage from '../screens/DoctorPage/DoctorPage.tsx';
+import CreateRequestScreen from '../screens/DoctorPage/CreateRequestScreen.tsx';
+import BloodBankDashboard from '../screens/BloodBank/BloodBankDashboard.tsx';
+import DonorDashboard from '../screens/DonneurPage/DonorDashboard.tsx';
 
 const Stack = createStackNavigator<RootStackParamList>();
 const myOnSubmitFunction = (data: any) => {
@@ -39,7 +43,24 @@ const AppNavigation = () => {
           name="SignUp" 
           children={() => <SignUpScreen onSubmit={myOnSubmitFunction} />} 
         />
+        <Stack.Screen
+        name="DoctorPage"
+        component={DoctorPage}
+      />
+        <Stack.Screen
+          name="CreateRequest"
+          component={CreateRequestScreen}
+        />
 
+        <Stack.Screen
+          name="bloodbank"
+          component={BloodBankDashboard}
+        />
+
+        <Stack.Screen
+          name="donor"
+          component={DonorDashboard }
+        />
 
       </Stack.Navigator>
     </NavigationContainer>
