@@ -4,39 +4,45 @@ import { theme } from '../../constants/theme';
 import { RoleCardProps, RoleType } from '../../types';
 import { responsiveSize, responsiveFontSize, dynamicWidth } from '../../utils/responsive';
 
-// Simple icon components (you can replace these with actual icon libraries)
+// Simple icon components
 const DoctorIcon: React.FC<{ size: number; color: string }> = ({ size, color }) => (
-  <View style={{
-    width: size,
-    height: size,
-    backgroundColor: color,
-    borderRadius: size / 2,
-    justifyContent: 'center',
-    alignItems: 'center',
-  }}>
+  <View
+    style={{
+      width: size,
+      height: size,
+      backgroundColor: color,
+      borderRadius: size / 2,
+      justifyContent: 'center',
+      alignItems: 'center',
+    }}
+  >
     <Text style={{ color: 'white', fontSize: size * 0.5, fontWeight: 'bold' }}>D</Text>
   </View>
 );
 
 const BloodDropIcon: React.FC<{ size: number; color: string }> = ({ size, color }) => (
-  <View style={{
-    width: size,
-    height: size,
-    backgroundColor: color,
-    borderRadius: size / 4,
-    transform: [{ rotate: '45deg' }],
-  }} />
+  <View
+    style={{
+      width: size,
+      height: size,
+      backgroundColor: color,
+      borderRadius: size / 4,
+      transform: [{ rotate: '45deg' }],
+    }}
+  />
 );
 
 const HeartIcon: React.FC<{ size: number; color: string }> = ({ size, color }) => (
-  <View style={{
-    width: size,
-    height: size,
-    backgroundColor: color,
-    borderRadius: size / 2,
-    justifyContent: 'center',
-    alignItems: 'center',
-  }}>
+  <View
+    style={{
+      width: size,
+      height: size,
+      backgroundColor: color,
+      borderRadius: size / 2,
+      justifyContent: 'center',
+      alignItems: 'center',
+    }}
+  >
     <Text style={{ color: 'white', fontSize: size * 0.4 }}>♥</Text>
   </View>
 );
@@ -70,10 +76,9 @@ const RoleCard: React.FC<RoleCardProps> = ({
       padding: responsiveSize(theme.spacing.md),
       borderRadius: theme.borderRadius.lg,
       borderWidth: 2,
-      minHeight: theme.componentDimensions.cardMinHeight,
+      minHeight: responsiveSize(theme.componentDimensions.cardMinHeight), // Réactif
       marginHorizontal: responsiveSize(theme.spacing.xs),
     };
-
     const selectedStyle: ViewStyle = isSelected
       ? {
           borderColor: theme.colors.primary,
@@ -83,7 +88,6 @@ const RoleCard: React.FC<RoleCardProps> = ({
           borderColor: theme.colors.border,
           backgroundColor: theme.colors.white,
         };
-
     return {
       ...baseStyle,
       ...selectedStyle,
@@ -91,17 +95,15 @@ const RoleCard: React.FC<RoleCardProps> = ({
     };
   };
 
-  const getTitleStyle = (): TextStyle => {
-    return {
-      fontSize: responsiveFontSize(theme.typography.fontSize.sm),
-      fontWeight: theme.typography.fontWeight.medium,
-      color: isSelected ? theme.colors.primary : theme.colors.textSecondary,
-      marginTop: responsiveSize(theme.spacing.sm),
-      textAlign: 'center',
-    };
-  };
+  const getTitleStyle = (): TextStyle => ({
+    fontSize: responsiveFontSize(theme.typography.fontSize.sm),
+    fontWeight: theme.typography.fontWeight.medium,
+    color: isSelected ? theme.colors.primary : theme.colors.textSecondary,
+    marginTop: responsiveSize(theme.spacing.sm),
+    textAlign: 'center' as const, // Typage explicite
+  });
 
-  const iconSize = theme.componentDimensions.iconSize.lg;
+  const iconSize = responsiveSize(theme.componentDimensions.iconSize.lg); // Réactif
   const iconColor = isSelected ? theme.colors.primary : theme.colors.gray400;
 
   return (

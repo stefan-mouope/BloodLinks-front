@@ -1,2 +1,0 @@
-
-export {FirstPageScreen} from './FirstPageScreen'

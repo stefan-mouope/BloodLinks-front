@@ -182,7 +182,7 @@ export type RoleSelectorProps = {
 export type RoleCardProps = {
   role: RoleType;
   title: string;
-  icon: React.ReactNode;
+  icon?: React.ReactNode;
   isSelected: boolean;
   onPress: () => void;
   style?: ViewStyle;
@@ -203,13 +203,13 @@ export type SignUpFormData = {
   // Common fields
   email: string;
   password: string;
-  user_type: RoleType;
+  user_type: RoleType | null;
   
   // Doctor specific fields
   nom?: string;
   prenom?: string;
   code_inscription?: string;
-  banque_de_sang_id?: number;
+  banque_de_sang_id?: number | null;
   
   // Bank specific fields
   nom_banque?: string;
@@ -219,7 +219,7 @@ export type SignUpFormData = {
   // Donor specific fields
   nom_donneur?: string;
   prenom_donneur?: string;
-  groupe_sanguin?: BloodType;
+  groupe_sanguin?: BloodType | null;
 };
 
 export type SignUpScreenProps = {
