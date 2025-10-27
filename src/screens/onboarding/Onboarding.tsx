@@ -84,14 +84,14 @@ const styles = StyleSheet.create({
   },
   slide: {
     flex: 1,
-    justifyContent: 'space-between', // espace entre texte et boutons
+    justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: theme.spacing['2xl'],
     paddingHorizontal: theme.spacing.sm,
   },
   textContainer: {
     flex: 1,
-    justifyContent: 'center', // centre verticalement le texte
+    justifyContent: 'center', 
     alignItems: 'center',
     width: '100%',
   },
