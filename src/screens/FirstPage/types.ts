@@ -12,6 +12,7 @@ export type RootStackParamList = {
   donorprofile:undefined;
   doctorprofile:undefined;
   bankprofile:undefined;
+  Onboarding: {step: number}
 };
 
 export type FirstPageScreenRouteProp = RouteProp<RootStackParamList, 'FirstPage'>;
@@ -24,6 +25,8 @@ export type donorRouteProp = RouteProp<RootStackParamList, 'donor'>;
 export type donorprofileRouteProp = RouteProp<RootStackParamList, 'donorprofile'>;
 export type doctorprofileRouteProp = RouteProp<RootStackParamList, 'doctorprofile'>;
 export type bankprofileRouteProp = RouteProp<RootStackParamList, 'bankprofile'>;
+export type OnboardingRouteProp = RouteProp<RootStackParamList, 'Onboarding'>;
+
 
 
 

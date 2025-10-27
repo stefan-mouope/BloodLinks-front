@@ -14,6 +14,7 @@ import DonorDashboard from '../screens/DonneurPage/DonorDashboard.tsx';
 import DoctorProfileScreen from '../screens/profiles/DoctorProfileScreen.tsx';
 import DonorProfileScreen from '../screens/profiles/DonorProfileScreen.tsx';
 import BankProfileScreen from '../screens/profiles/BankProfileScreen.tsx';
+import OnboardingScreen from '../screens/onboarding/Onboarding.tsx';
 
 const Stack = createStackNavigator<RootStackParamList>();
 const myOnSubmitFunction = (data: any) => {
@@ -30,7 +31,7 @@ const AppNavigation = () => {
           header: (props) => <Header {...props} />, 
           headerShown: true, 
         }}
-        initialRouteName="FirstPage"
+        initialRouteName="Onboarding"
       >
         <Stack.Screen
           name="FirstPage"
@@ -79,7 +80,12 @@ const AppNavigation = () => {
           component={ BankProfileScreen}
         />
 
-
+          <Stack.Screen
+            name="Onboarding"
+            component={OnboardingScreen}
+            initialParams={{ step: 1 }} // Défini ici
+            options={{ headerShown: false }}
+          />
 
 
 
