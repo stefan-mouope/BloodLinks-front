@@ -1,6 +1,6 @@
 
 import api from '../../api/axiosConfig';
-import { LoginCredentials, RegisterData, AuthResponse } from '../../types/users';
+import { LoginCredentials, RegisterData, AuthResponse } from '../../types/auth';
 
 const authService = {
   /**

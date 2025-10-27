@@ -1,22 +1,8 @@
 import { create } from 'zustand';
-import { persist, StateStorage, createJSONStorage } from 'zustand/middleware';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import authService from '../services/auth/authService';
 import { AuthState, User, LoginCredentials, RegisterData } from '../types/auth';
-
-// Configuration du stockage personnalisé pour Zustand
-const storage: StateStorage = {
-  getItem: async (name: string): Promise<string | null> => {
-    const value = await AsyncStorage.getItem(name);
-    return value;
-  },
-  setItem: async (name: string, value: string): Promise<void> => {
-    await AsyncStorage.setItem(name, value);
-  },
-  removeItem: async (name: string): Promise<void> => {
-    await AsyncStorage.removeItem(name);
-  },
-};
 
 const useAuthStore = create<AuthState>()(
   persist(
@@ -40,11 +26,12 @@ const useAuthStore = create<AuthState>()(
             refreshToken: refresh,
             isAuthenticated: true,
             isLoading: false,
+            error: null,
           });
           return user;
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : 'Échec de la connexion';
-          set({ error: errorMessage, isLoading: false });
+          set({ error: errorMessage, isLoading: false, isAuthenticated: false });
           throw error;
         }
       },
@@ -53,26 +40,41 @@ const useAuthStore = create<AuthState>()(
       register: async (userData: RegisterData) => {
         set({ isLoading: true, error: null });
         try {
-          const { user, access, refresh } = await authService.register(userData);
+          const response = await authService.register(userData);
+          
+          // Si l'inscription retourne les tokens, connecter l'utilisateur
+          if (response.access && response.refresh) {
+            set({
+              user: response.user,
+              accessToken: response.access,
+              refreshToken: response.refresh,
+              isAuthenticated: true,
+              isLoading: false,
+              error: null,
+            });
+            return response.user;
+          }
+          
+          // Sinon, juste indiquer le succès
           set({
-            user,
-            accessToken: access,
-            refreshToken: refresh,
-            isAuthenticated: true,
             isLoading: false,
+            error: null,
           });
-          return user;
+          return response.user;
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : "Échec de l'inscription";
-          set({ error: errorMessage, isLoading: false });
+          set({ error: errorMessage, isLoading: false, isAuthenticated: false });
           throw error;
         }
       },
 
       // Déconnexion
       logout: async () => {
+        set({ isLoading: true });
         try {
           await authService.logout();
+        } catch (error) {
+          console.error('Erreur lors de la déconnexion:', error);
         } finally {
           set({
             user: null,
@@ -88,15 +90,30 @@ const useAuthStore = create<AuthState>()(
       // Vérification de l'authentification
       checkAuth: async () => {
         const { accessToken } = get();
-        if (!accessToken) return false;
+        if (!accessToken) {
+          set({ isAuthenticated: false, isLoading: false });
+          return false;
+        }
 
         set({ isLoading: true });
         try {
           const user = await authService.getProfile();
-          set({ user, isAuthenticated: true, isLoading: false });
+          set({ 
+            user, 
+            isAuthenticated: true, 
+            isLoading: false,
+            error: null,
+          });
           return true;
         } catch (error) {
-          set({ isAuthenticated: false, isLoading: false });
+          console.error('Erreur lors de la vérification de l\'authentification:', error);
+          set({ 
+            user: null,
+            isAuthenticated: false, 
+            isLoading: false,
+            accessToken: null,
+            refreshToken: null,
+          });
           return false;
         }
       },
@@ -104,15 +121,19 @@ const useAuthStore = create<AuthState>()(
       // Rafraîchissement du token
       refreshAccessToken: async () => {
         const { refreshToken } = get();
-        if (!refreshToken) return null;
+        if (!refreshToken) {
+          set({ isAuthenticated: false });
+          return null;
+        }
 
         try {
           const { access } = await authService.refreshToken(refreshToken);
-          set({ accessToken: access });
+          set({ accessToken: access, error: null });
           return access;
         } catch (error) {
+          console.error('Erreur lors du rafraîchissement du token:', error);
           // En cas d'erreur de rafraîchissement, déconnecter l'utilisateur
-          get().logout();
+          await get().logout();
           return null;
         }
       },
@@ -121,16 +142,30 @@ const useAuthStore = create<AuthState>()(
       name: 'auth-storage',
       storage: createJSONStorage(() => ({
         getItem: async (name: string) => {
-          const value = await AsyncStorage.getItem(name);
-          return value;
+          try {
+            const value = await AsyncStorage.getItem(name);
+            return value;
+          } catch (error) {
+            console.error('Erreur lors de la lecture du storage:', error);
+            return null;
+          }
         },
         setItem: async (name: string, value: string) => {
-          await AsyncStorage.setItem(name, value);
+          try {
+            await AsyncStorage.setItem(name, value);
+          } catch (error) {
+            console.error('Erreur lors de l\'écriture du storage:', error);
+          }
         },
         removeItem: async (name: string) => {
-          await AsyncStorage.removeItem(name);
+          try {
+            await AsyncStorage.removeItem(name);
+          } catch (error) {
+            console.error('Erreur lors de la suppression du storage:', error);
+          }
         },
       })),
+      // Ne persister que les données nécessaires
       partialize: (state: AuthState) => ({
         user: state.user,
         accessToken: state.accessToken,
