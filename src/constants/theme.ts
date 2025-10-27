@@ -44,6 +44,7 @@ export const colors = {
   textSecondary: '#4A5568',
   textTertiary: '#718096',
   textInverse: '#FFFFFF',
+  blackcolor:"#000",
   
   // Border colors
   border: '#E2E8F0',

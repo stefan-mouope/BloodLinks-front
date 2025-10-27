@@ -1,19 +1,16 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import Swiper from 'react-native-swiper';
 import { theme } from '../../constants/theme';
-import { useRoute, RouteProp } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import {RootStackParamList} from "../FirstPage/types"
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../FirstPage/types';
 
+type OnboardingScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Onboarding'>;
 
-type Props = {
-  navigation: NativeStackNavigationProp<RootStackParamList, 'Onboarding'>;
-};
-
-
-const OnboardingScreen: React.FC<Props> = ({ navigation }) => {
-  const route = useRoute<RouteProp<RootStackParamList, 'Onboarding'>>();
-  const step = route.params?.step ?? 1;
+const OnboardingScreen = () => {
+  const navigation = useNavigation<OnboardingScreenNavigationProp>();
+  const swiperRef = useRef<any>(null);
 
   const onboardingData = [
     {
@@ -30,115 +27,95 @@ const OnboardingScreen: React.FC<Props> = ({ navigation }) => {
     },
   ];
 
-  const currentStep = onboardingData[step - 1];
-  const totalSteps = onboardingData.length;
-
-  const handleNext = () => {
-    if (step < totalSteps) {
-      navigation.replace('Onboarding', { step: step + 1 });
-    }else{
-        navigation.replace('FirstPage');
-    }
-  };
-
   const handleSkip = () => {
     navigation.replace('FirstPage');
   };
 
+  const handleNext = (index: number) => {
+    if (index < onboardingData.length - 1) {
+      swiperRef.current?.scrollBy(1); // passe à l’étape suivante
+    } else {
+      navigation.replace('FirstPage'); // dernière étape → FirstPage
+    }
+  };
+
   return (
     <View style={styles.container}>
-      {/* Conteneur pour le contenu principal (titre et description) */}
-      <View style={styles.contentContainer}>
-        <Text style={styles.title}>{currentStep.title}</Text>
-        <Text style={styles.description} numberOfLines={3}>
-          {currentStep.description}
-        </Text>
-      </View>
-      {/* Conteneur pour le bloc en bas */}
-      <View style={styles.bottomContainer}>
-        <View style={styles.progressBarContainer}>
-          {Array.from({ length: totalSteps }, (_, index) => (
-            <View
-              key={index}
-              style={index + 1 <= step ? styles.progressActive : styles.progressInactive}
-            />
-          ))}
-        </View>
-        <TouchableOpacity
-          style={styles.nextButton}
-          onPress={handleNext}
-        //   disabled={step === totalSteps}
-        >
-          <Text style={styles.nextButtonText}>Next</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
-          <Text style={styles.skipButtonText}>Skip</Text>
-        </TouchableOpacity>
-      </View>
+      <Swiper
+        ref={swiperRef}
+        loop={false}
+        showsPagination={true}
+        dotStyle={styles.progressInactive}
+        activeDotStyle={styles.progressActive}
+      >
+        {onboardingData.map((step, index) => (
+          <View key={index} style={styles.slide}>
+            {/* Conteneur texte centré */}
+            <View style={styles.textContainer}>
+              <Text style={styles.title}>{step.title}</Text>
+              <Text style={styles.description}>{step.description}</Text>
+            </View>
+
+            {/* Conteneur boutons en bas */}
+            <View style={styles.bottomContainer}>
+              <TouchableOpacity style={styles.nextButton} onPress={() => handleNext(index)}>
+                <Text style={styles.nextButtonText}>
+                  {index === onboardingData.length - 1 ? 'Next' : 'Next'}
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
+                <Text style={styles.skipButtonText}>Skip</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        ))}
+      </Swiper>
     </View>
   );
 };
 
+const { width } = Dimensions.get('window');
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.primaryLight,
-    padding: theme.spacing.md,
+    backgroundColor: theme.colors.primary,
   },
-  contentContainer: {
+  slide: {
     flex: 1,
-    justifyContent: 'flex-start', // Positionne le contenu en haut
+    justifyContent: 'space-between', // espace entre texte et boutons
     alignItems: 'center',
-    paddingTop: theme.spacing.xl, // Espacement supplémentaire en haut pour remonter
+    paddingVertical: theme.spacing['2xl'],
+    paddingHorizontal: theme.spacing.sm,
+  },
+  textContainer: {
+    flex: 1,
+    justifyContent: 'center', // centre verticalement le texte
+    alignItems: 'center',
+    width: '100%',
   },
   title: {
     fontSize: theme.typography.fontSize['2xl'],
     fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.textPrimary,
+    color: theme.colors.white,
     textAlign: 'center',
     marginBottom: theme.spacing.sm,
   },
-    description: {
+  description: {
     fontSize: theme.typography.fontSize.base,
-    color: theme.colors.textSecondary,
+    color: theme.colors.white,
     textAlign: 'center',
     marginBottom: theme.spacing['2xl'],
-    width: '80%', // Limite la largeur pour forcer trois lignes
-    lineHeight: theme.typography.lineHeight.base, // Ajuste la hauteur des lignes
-    },
-
+    width: '80%',
+    lineHeight: theme.typography.lineHeight.base,
+  },
   bottomContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'white',
-    padding: theme.spacing.md,
-    borderTopLeftRadius: theme.borderRadius.lg,
-    borderTopRightRadius: theme.borderRadius.lg,
+    width: '100%',
     alignItems: 'center',
-  },
-  progressBarContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: theme.spacing.lg,
-  },
-  progressActive: {
-    width: 20,
-    height: 4,
-    backgroundColor: theme.colors.primary,
-    borderRadius: theme.borderRadius.sm,
-    marginHorizontal: 4,
-  },
-  progressInactive: {
-    width: 4,
-    height: 4,
-    backgroundColor: theme.colors.gray300,
-    borderRadius: theme.borderRadius.full,
-    marginHorizontal: 4,
   },
   nextButton: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: theme.colors.white,
     paddingHorizontal: theme.spacing.md,
     height: theme.componentDimensions.buttonHeight.md,
     borderRadius: theme.borderRadius.md,
@@ -148,7 +125,7 @@ const styles = StyleSheet.create({
     width: '80%',
   },
   nextButtonText: {
-    color: theme.colors.textInverse,
+    color: theme.colors.primary,
     fontSize: theme.typography.fontSize.base,
     fontWeight: theme.typography.fontWeight.medium,
   },
@@ -159,9 +136,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   skipButtonText: {
-    color: theme.colors.textSecondary,
+    color: theme.colors.blackcolor,
     fontSize: theme.typography.fontSize.sm,
-    fontWeight: theme.typography.fontWeight.normal,
+    fontWeight: theme.typography.fontWeight.bold,
+  },
+  progressActive: {
+    width: 20,
+    height: 4,
+    backgroundColor: theme.colors.white,
+    borderRadius: theme.borderRadius.sm,
+    marginHorizontal: 4,
+  },
+  progressInactive: {
+    width: 4,
+    height: 4,
+    backgroundColor: theme.colors.gray300,
+    borderRadius: theme.borderRadius.full,
+    marginHorizontal: 4,
   },
 });
 
