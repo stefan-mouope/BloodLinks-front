@@ -15,8 +15,16 @@ const FirstPageScreen = () => {
     navigation.navigate('Login');
   };
 
+ const handleBackToOnboarding = () => {
+    navigation.navigate('Onboarding', { step: 3 }); // dernier step
+  };
+
   return (
     <View style={styles.container}>
+      {/* Bouton Back */}
+      <TouchableOpacity style={styles.backButton} onPress={handleBackToOnboarding}>
+        <Text style={styles.backButtonText}>←</Text>
+      </TouchableOpacity>
       <Text style={styles.title}>BloodLink</Text>
       <Text style={styles.subtitle}>Donner du sang, sauver des vies.</Text>
       <TouchableOpacity style={styles.button} onPress={handleStart}>
@@ -32,6 +40,16 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  backButton: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    padding: 10,
+  },
+  backButtonText: {
+    fontSize: 24,
+    color: theme.colors.white,
   },
   title: {
     fontSize: theme.typography.fontSize['3xl'],
