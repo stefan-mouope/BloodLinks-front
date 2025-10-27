@@ -7,6 +7,14 @@ import { RootStackParamList } from '../screens/FirstPage/types.ts';
 import FirstPageScreen from '../screens/FirstPage/FirstPageScreen.tsx';
 import Header from '../components/ui/Header';
 import SignUpScreen from '../screens/Auth/SignUpScreen.tsx';
+import DoctorPage from '../screens/DoctorPage/DoctorPage.tsx';
+import CreateRequestScreen from '../screens/DoctorPage/CreateRequestScreen.tsx';
+import BloodBankDashboard from '../screens/BloodBank/BloodBankDashboard.tsx';
+import DonorDashboard from '../screens/DonneurPage/DonorDashboard.tsx';
+import DoctorProfileScreen from '../screens/profiles/DoctorProfileScreen.tsx';
+import DonorProfileScreen from '../screens/profiles/DonorProfileScreen.tsx';
+import BankProfileScreen from '../screens/profiles/BankProfileScreen.tsx';
+import OnboardingScreen from '../screens/onboarding/Onboarding.tsx';
 
 const Stack = createStackNavigator<RootStackParamList>();
 const myOnSubmitFunction = (data: any) => {
@@ -23,7 +31,7 @@ const AppNavigation = () => {
           header: (props) => <Header {...props} />, 
           headerShown: true, 
         }}
-        initialRouteName="FirstPage"
+        initialRouteName="Onboarding"
       >
         <Stack.Screen
           name="FirstPage"
@@ -39,6 +47,48 @@ const AppNavigation = () => {
           name="SignUp" 
           children={() => <SignUpScreen onSubmit={myOnSubmitFunction} />} 
         />
+        <Stack.Screen
+        name="DoctorPage"
+        component={DoctorPage}
+      />
+        <Stack.Screen
+          name="CreateRequest"
+          component={CreateRequestScreen}
+        />
+
+        <Stack.Screen
+          name="bloodbank"
+          component={BloodBankDashboard}
+        />
+
+        <Stack.Screen
+          name="donor"
+          component={DonorDashboard }
+        />
+
+       <Stack.Screen
+          name="donorprofile"
+          component={ DonorProfileScreen}
+        />
+
+       <Stack.Screen
+          name="doctorprofile"
+          component={ DoctorProfileScreen}
+        />
+       <Stack.Screen
+          name="bankprofile"
+          component={ BankProfileScreen}
+        />
+
+          <Stack.Screen
+            name="Onboarding"
+            component={OnboardingScreen}
+            initialParams={{ step: 1 }} // Défini ici
+            options={{ headerShown: false }}
+          />
+
+
+
 
 
       </Stack.Navigator>

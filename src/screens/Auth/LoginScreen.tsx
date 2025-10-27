@@ -133,9 +133,31 @@ w        <RoleSelector
             <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
               <Text style={styles.signupLink}>S’inscrire</Text>
             </TouchableOpacity>
+            <View>
+            <TouchableOpacity
+                onPress={() => navigation.navigate('DoctorPage')}
+                style={{ padding: 12, backgroundColor: 'blue', borderRadius: 8 }}
+              >
+                <Text style={{ color: 'green' }}>Voir DoctorPage</Text>
+              </TouchableOpacity>
+            <TouchableOpacity
+                onPress={() => navigation.navigate('bloodbank')}
+                style={{ padding: 12, backgroundColor: 'green', borderRadius: 8 }}
+              >
+                <Text style={{ color: 'white' }}>Voir la banque</Text>
+              </TouchableOpacity>
+
+            <TouchableOpacity
+                onPress={() => navigation.navigate('donor')}
+                style={{ padding: 12, backgroundColor: 'green', borderRadius: 8 }}
+              >
+                <Text style={{ color: 'white' }}>Voir Donneur</Text>
+              </TouchableOpacity>
+            </View>
+
           </View>
         </View>
-        {/* Lien supprimé, navigation gérée par Header ou autre moyen */}
+        
       </ScrollView>
     </SafeAreaView>
   );
@@ -147,6 +169,8 @@ const styles = StyleSheet.create({
     color: theme.colors.textPrimary,
     marginBottom: theme.spacing.sm,
     textAlign: 'center',
+    fontWeight:theme.typography.fontWeight.bold
+    
   },
   subtitle: {
     fontSize: theme.typography.fontSize.base,
