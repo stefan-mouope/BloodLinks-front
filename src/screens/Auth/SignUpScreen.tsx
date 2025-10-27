@@ -3,47 +3,36 @@ import {
   View,
   Text,
   ScrollView,
-  TouchableOpacity,
-  StyleSheet,
   Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Input, RoleSelector, BloodTypeSelector, BankSelector } from '../../components/ui';
 import { theme } from '../../constants/theme';
-import { SignUpFormData, RoleType, BloodType } from '../../types';
-import { responsiveSize, responsiveFontSize, dynamicWidth, safeAreaPadding } from '../../utils/responsive';
+import { SignUpFormData, RoleType, BloodType } from '../../types/auth';
+import { responsiveSize, responsiveFontSize, safeAreaPadding } from '../../utils/responsive';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../FirstPage/types'; 
-
-
-interface SignUpScreenProps {
-  onSubmit: (data: SignUpFormData) => void;
-  loading?: boolean;
-  error?: string;
-}
+import { RootStackParamList } from '../../navigation/AppNavigator';
+import useAuthStore from '../../store/authStore';
 
 type SignUpScreenNavigationProp = StackNavigationProp<RootStackParamList, 'SignUp'>;
 
-const SignUpScreen: React.FC<SignUpScreenProps> = ({
-  onSubmit,
-  loading = false,
-  error,
-}) => {
+const SignUpScreen: React.FC = () => {
   const navigation = useNavigation<SignUpScreenNavigationProp>();
+  const { register, isLoading, error: authError } = useAuthStore();
+  
   const [formData, setFormData] = useState<SignUpFormData>({
     user_type: null,
     email: '',
     password: '',
+    // Champs docteur
     nom: '',
     prenom: '',
     code_inscription: '',
-    banque_de_sang_id: null,
-    nom_banque: '',
+    BanqueDeSang: null, // Changé de banque_de_sang_id à BanqueDeSang
+    // Champs banque
     localisation: '',
-    code_inscription_banque: '',
-    nom_donneur: '',
-    prenom_donneur: '',
+    // Champs donneur
     groupe_sanguin: null,
   });
   const [errors, setErrors] = useState<Partial<SignUpFormData>>({});
@@ -70,38 +59,43 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({
   };
 
   const handleBankSelect = (bankId: number) => {
-    setFormData(prev => ({ ...prev, banque_de_sang_id: bankId }));
-    if (errors.banque_de_sang_id) {
-      setErrors(prev => ({ ...prev, banque_de_sang_id: undefined }));
+    setFormData(prev => ({ ...prev, BanqueDeSang: bankId })); // Changé de banque_de_sang_id à BanqueDeSang
+    if (errors.BanqueDeSang) {
+      setErrors(prev => ({ ...prev, BanqueDeSang: undefined }));
     }
   };
 
   const validateForm = (): boolean => {
     const newErrors: Partial<SignUpFormData> = {};
+    
+    // Validation commune
     if (!formData.user_type) newErrors.user_type = 'Veuillez sélectionner un rôle' as any;
     if (!formData.email?.trim()) newErrors.email = 'Email requis';
     else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Veuillez entrer un email valide';
     if (!formData.password?.trim()) newErrors.password = 'Mot de passe requis';
     else if (formData.password.length < 6) newErrors.password = 'Le mot de passe doit contenir au moins 6 caractères';
 
+    // Validation docteur
     if (formData.user_type === 'docteur') {
       if (!formData.nom?.trim()) newErrors.nom = 'Nom requis';
       if (!formData.prenom?.trim()) newErrors.prenom = 'Prénom requis';
       if (!formData.code_inscription?.trim()) newErrors.code_inscription = 'Code d\'inscription requis';
       else if (!formData.code_inscription.endsWith('DOC')) newErrors.code_inscription = 'Le code doit se terminer par DOC';
-      if (!formData.banque_de_sang_id) newErrors.banque_de_sang_id = 'Veuillez sélectionner une banque de sang' as any;
+      if (!formData.BanqueDeSang) newErrors.BanqueDeSang = 'Veuillez sélectionner une banque de sang' as any;
     }
 
+    // Validation banque
     if (formData.user_type === 'banque') {
-      if (!formData.nom_banque?.trim()) newErrors.nom_banque = 'Nom de la banque requis';
+      if (!formData.nom?.trim()) newErrors.nom = 'Nom de la banque requis';
       if (!formData.localisation?.trim()) newErrors.localisation = 'Localisation requise';
-      if (!formData.code_inscription_banque?.trim()) newErrors.code_inscription_banque = 'Code d\'inscription requis';
-      else if (!formData.code_inscription_banque.endsWith('BANC')) newErrors.code_inscription_banque = 'Le code doit se terminer par BANC';
+      if (!formData.code_inscription?.trim()) newErrors.code_inscription = 'Code d\'inscription requis';
+      else if (!formData.code_inscription.endsWith('BANC')) newErrors.code_inscription = 'Le code doit se terminer par BANC';
     }
 
+    // Validation donneur
     if (formData.user_type === 'donneur') {
-      if (!formData.nom_donneur?.trim()) newErrors.nom_donneur = 'Nom requis';
-      if (!formData.prenom_donneur?.trim()) newErrors.prenom_donneur = 'Prénom requis';
+      if (!formData.nom?.trim()) newErrors.nom = 'Nom requis';
+      if (!formData.prenom?.trim()) newErrors.prenom = 'Prénom requis';
       if (!formData.groupe_sanguin) newErrors.groupe_sanguin = 'Groupe sanguin requis' as any;
     }
 
@@ -109,25 +103,53 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (validateForm()) {
-      onSubmit(formData);
+      try {
+        // Préparer les données selon le type d'utilisateur
+        const dataToSend: any = {
+          email: formData.email,
+          password: formData.password,
+          user_type: formData.user_type,
+        };
+
+        if (formData.user_type === 'docteur') {
+          dataToSend.nom = formData.nom;
+          dataToSend.prenom = formData.prenom;
+          dataToSend.code_inscription = formData.code_inscription;
+          dataToSend.BanqueDeSang = formData.BanqueDeSang;
+        } else if (formData.user_type === 'banque') {
+          dataToSend.nom = formData.nom;
+          dataToSend.localisation = formData.localisation;
+          dataToSend.code_inscription = formData.code_inscription;
+        } else if (formData.user_type === 'donneur') {
+          dataToSend.nom = formData.nom;
+          dataToSend.prenom = formData.prenom;
+          dataToSend.groupe_sanguin = formData.groupe_sanguin;
+        }
+
+        const success = await register(dataToSend);
+        if (success) {
+          Alert.alert(
+            'Succès',
+            'Inscription réussie ! Vous pouvez maintenant vous connecter.',
+            [
+              {
+                text: 'OK',
+                onPress: () => navigation.navigate('Login'),
+              },
+            ]
+          );
+        }
+      } catch (err) {
+        console.error('Erreur inscription:', err);
+        Alert.alert(
+          'Erreur',
+          authError || 'Une erreur est survenue lors de l\'inscription'
+        );
+      }
     }
   };
-
-  const handleLogin = () => {
-    navigation.navigate('Login');
-  };
-
-  const getHeaderStyle = () => ({
-    flexDirection: 'row' as const,
-    justifyContent: 'space-between' as const,
-    alignItems: 'center' as const,
-    marginBottom: responsiveSize(theme.spacing.xl),
-    paddingHorizontal: safeAreaPadding(theme.spacing.md),
-  });
-
- 
 
   const getContainerStyle = () => ({
     flex: 1,
@@ -165,6 +187,8 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({
           selectedRole={formData.user_type}
           onRoleSelect={handleRoleSelect}
         />
+        {errors.user_type && <Text style={getErrorStyle()}>{errors.user_type}</Text>}
+
         {/* Doctor specific fields */}
         {formData.user_type === 'docteur' && (
           <>
@@ -190,20 +214,22 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({
               error={errors.code_inscription}
             />
             <BankSelector
-              selectedBankId={formData.banque_de_sang_id || null}
+              selectedBankId={formData.BanqueDeSang || null}
               onBankSelect={handleBankSelect}
             />
+            {errors.BanqueDeSang && <Text style={getErrorStyle()}>{errors.BanqueDeSang}</Text>}
           </>
         )}
+
         {/* Bank specific fields */}
         {formData.user_type === 'banque' && (
           <>
             <Input
               label="Nom de la banque"
               placeholder="Entrez le nom de la banque"
-              value={formData.nom_banque}
-              onChangeText={(value) => handleInputChange('nom_banque', value)}
-              error={errors.nom_banque}
+              value={formData.nom}
+              onChangeText={(value) => handleInputChange('nom', value)}
+              error={errors.nom}
             />
             <Input
               label="Localisation"
@@ -215,35 +241,38 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({
             <Input
               label="Code d'inscription"
               placeholder="Entrez votre code (doit finir par BANC)"
-              value={formData.code_inscription_banque}
-              onChangeText={(value) => handleInputChange('code_inscription_banque', value)}
-              error={errors.code_inscription_banque}
+              value={formData.code_inscription}
+              onChangeText={(value) => handleInputChange('code_inscription', value)}
+              error={errors.code_inscription}
             />
           </>
         )}
+
         {/* Donor specific fields */}
         {formData.user_type === 'donneur' && (
           <>
             <Input
               label="Nom"
               placeholder="Entrez votre nom"
-              value={formData.nom_donneur}
-              onChangeText={(value) => handleInputChange('nom_donneur', value)}
-              error={errors.nom_donneur}
+              value={formData.nom}
+              onChangeText={(value) => handleInputChange('nom', value)}
+              error={errors.nom}
             />
             <Input
               label="Prénom"
               placeholder="Entrez votre prénom"
-              value={formData.prenom_donneur}
-              onChangeText={(value) => handleInputChange('prenom_donneur', value)}
-              error={errors.prenom_donneur}
+              value={formData.prenom}
+              onChangeText={(value) => handleInputChange('prenom', value)}
+              error={errors.prenom}
             />
             <BloodTypeSelector
               selectedBloodType={formData.groupe_sanguin || null}
               onBloodTypeSelect={handleBloodTypeSelect}
             />
+            {errors.groupe_sanguin && <Text style={getErrorStyle()}>{errors.groupe_sanguin}</Text>}
           </>
         )}
+
         {/* Email and Password fields */}
         <Input
           label="Email"
@@ -262,15 +291,17 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({
           secureTextEntry
           error={errors.password}
         />
+
         {/* Global error message */}
-        {error && <Text style={getErrorStyle()}>{error}</Text>}
+        {authError && <Text style={getErrorStyle()}>{authError}</Text>}
       </ScrollView>
+
       {/* Submit Button */}
       <View style={{ paddingBottom: safeAreaPadding(theme.spacing.lg) }}>
         <Button
           title="S'inscrire"
           onPress={handleSubmit}
-          loading={loading}
+          loading={isLoading}
           fullWidth
           size="lg"
         />

@@ -2,6 +2,7 @@ import React from 'react';
 import { StatusBar, useColorScheme } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import AppNavigation from './src/Navigation/AppNavigation';
+import AppNavigator from './src/navigation/AppNavigator';
 
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
@@ -13,7 +14,7 @@ const App = () => {
         backgroundColor="transparent"
         translucent
       />
-      <AppNavigation />
+      <AppNavigator/>
     </SafeAreaProvider>
   );
 };

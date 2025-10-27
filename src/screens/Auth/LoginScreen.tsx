@@ -8,38 +8,27 @@ import {
   TouchableOpacity
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Button, Input, RoleSelector } from '../../components/ui';
+import { Button, Input } from '../../components/ui';
 import { theme } from '../../constants/theme';
 import { responsiveSize, responsiveFontSize, safeAreaPadding } from '../../utils/responsive';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../FirstPage/types';
-import { RoleType } from '../../types';
+import useAuthStore from '../../store/authStore';
 
-// Typage de la navigation
 type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
 
 const LoginScreen = () => {
   const navigation = useNavigation<LoginScreenNavigationProp>();
-  const [formData, setFormData] = useState<{
-    email: string;
-    password: string;
-    role: RoleType | null;
-  }>({
+  const { login, isLoading, error: authError } = useAuthStore();
+  
+  const [formData, setFormData] = useState({
     email: '',
     password: '',
-    role: null,
   });
   const [errors, setErrors] = useState<Partial<typeof formData>>({});
 
-  const handleRoleSelect = (role: RoleType) => {
-    setFormData(prev => ({ ...prev, role }));
-    if (errors.role) {
-      setErrors(prev => ({ ...prev, role: undefined }));
-    }
-  };
-
-  const handleInputChange = (field: keyof typeof formData, value: string | null) => {
+  const handleInputChange = (field: keyof typeof formData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: undefined }));
@@ -57,11 +46,25 @@ const LoginScreen = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (validateForm()) {
-      console.log('Login with:', { email: formData.email, password: formData.password, role: formData.role });
-      // Logique de connexion ici (ex. appel API)
-      // Naviguer vers une page après connexion si nécessaire
+      try {
+        const success = await login({
+          email: formData.email,
+          password: formData.password,
+        });
+        
+        if (success) {
+          // La navigation sera gérée automatiquement par le store/navigation guard
+          console.log('Connexion réussie');
+        }
+      } catch (err) {
+        console.error('Erreur connexion:', err);
+        Alert.alert(
+          'Erreur',
+          authError || 'Email ou mot de passe incorrect'
+        );
+      }
     }
   };
 
@@ -90,52 +93,54 @@ const LoginScreen = () => {
 
   return (
     <SafeAreaView style={getContainerStyle()}>
-      
       <ScrollView
         style={getFormStyle()}
         contentContainerStyle={getFormContentStyle()}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        <Text style={styles.welcomeText}>Bienvenue</Text>
-        <Text style={styles.subtitle}>Connectez-vous ou créez un compte</Text>
-w        <RoleSelector
-          selectedRole={formData.role}
-          onRoleSelect={handleRoleSelect}
-        />
-        <Input
-          label="Email"
-          placeholder="Entrez votre email"
-          value={formData.email}
-          onChangeText={(value) => handleInputChange('email', value)}
-          keyboardType="email-address"
-          autoCapitalize="none"
-          error={errors.email}
-        />
-        <Input
-          label="Mot de passe"
-          placeholder="Entrez votre mot de passe"
-          value={formData.password}
-          onChangeText={(value) => handleInputChange('password', value)}
-          secureTextEntry
-          error={errors.password}
-        />
-        {Object.values(errors).some(error => error) && <Text style={getErrorStyle()}>Veuillez corriger les erreurs ci-dessus.</Text>}
-        <View style={styles.buttonContainer}>
-          <Button
-            title="Se connecter"
-            onPress={handleLogin}
-            fullWidth
-            size="lg"
+        <View>
+          <Text style={styles.welcomeText}>Bienvenue</Text>
+          <Text style={styles.subtitle}>Connectez-vous à votre compte</Text>
+        </View>
+
+        <View>
+          <Input
+            label="Email"
+            placeholder="Entrez votre email"
+            value={formData.email}
+            onChangeText={(value) => handleInputChange('email', value)}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            error={errors.email}
           />
-          <View style={styles.signupContainer}>
-            <Text style={styles.signupText}>Pas de compte ? </Text>
-            <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
-              <Text style={styles.signupLink}>S’inscrire</Text>
-            </TouchableOpacity>
+          <Input
+            label="Mot de passe"
+            placeholder="Entrez votre mot de passe"
+            value={formData.password}
+            onChangeText={(value) => handleInputChange('password', value)}
+            secureTextEntry
+            error={errors.password}
+          />
+
+          {authError && <Text style={getErrorStyle()}>{authError}</Text>}
+
+          <View style={styles.buttonContainer}>
+            <Button
+              title="Se connecter"
+              onPress={handleLogin}
+              loading={isLoading}
+              fullWidth
+              size="lg"
+            />
+            <View style={styles.signupContainer}>
+              <Text style={styles.signupText}>Pas de compte ? </Text>
+              <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
+                <Text style={styles.signupLink}>S'inscrire</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-        {/* Lien supprimé, navigation gérée par Header ou autre moyen */}
       </ScrollView>
     </SafeAreaView>
   );
@@ -144,6 +149,7 @@ w        <RoleSelector
 const styles = StyleSheet.create({
   welcomeText: {
     fontSize: theme.typography.fontSize['2xl'],
+    fontWeight: theme.typography.fontWeight.bold,
     color: theme.colors.textPrimary,
     marginBottom: theme.spacing.sm,
     textAlign: 'center',
@@ -151,35 +157,27 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: theme.typography.fontSize.base,
     color: theme.colors.textSecondary,
-    marginBottom: theme.spacing.md,
+    marginBottom: theme.spacing.xl,
     textAlign: 'center',
-  },
-  roleText: {
-    fontSize: theme.typography.fontSize.base,
-    color: theme.colors.textPrimary,
-    marginBottom: theme.spacing.sm,
-    alignSelf: 'flex-start',
   },
   buttonContainer: {
     paddingVertical: theme.spacing.md,
   },
   signupContainer: {
-  flexDirection: 'row',
-  justifyContent: 'center',
-  alignItems: 'center',
-  marginTop: theme.spacing.sm,
-  marginBottom: theme.spacing.lg,
-},
-signupText: {
-  color: theme.colors.textSecondary,
-  fontSize: theme.typography.fontSize.base,
-},
-signupLink: {
-  color: theme.colors.primary,
-  fontSize: theme.typography.fontSize.base,
-  fontWeight: theme.typography.fontWeight.semiBold,
-},
-
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: theme.spacing.md,
+  },
+  signupText: {
+    color: theme.colors.textSecondary,
+    fontSize: theme.typography.fontSize.base,
+  },
+  signupLink: {
+    color: theme.colors.primary,
+    fontSize: theme.typography.fontSize.base,
+    fontWeight: theme.typography.fontWeight.semiBold,
+  },
 });
 
 export default LoginScreen;
