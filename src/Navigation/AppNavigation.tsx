@@ -90,7 +90,6 @@ const AppNavigation = () => {
 
 
 
-
       </Stack.Navigator>
     </NavigationContainer>
   );

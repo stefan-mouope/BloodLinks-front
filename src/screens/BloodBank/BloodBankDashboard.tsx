@@ -163,7 +163,7 @@ const BloodBankDashboard = () => {
           style={styles.navItem}
           onPress={() => {
             setActiveTab('Historique');
-            navigation.navigate('History');
+            navigation.navigate('historybank');
           }}
         >
           <Text style={{ fontSize: 24 }}>⏱️</Text>
