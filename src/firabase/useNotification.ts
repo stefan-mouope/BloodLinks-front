@@ -1,7 +1,7 @@
 // src/hooks/useNotification.ts
 import { useEffect } from 'react';
 import { PermissionsAndroid, Alert, Platform } from 'react-native';
-import { NotificationService } from '../services/NotificationService';
+import { NotificationService } from '../services/notifications/NotificationService';
 
 export default function useNotification(userId: number | null) {
   useEffect(() => {

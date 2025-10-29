@@ -14,6 +14,13 @@ import {
 } from 'react-native';
 import { theme } from '../../constants/theme';
 
+import useAuthStore from '../../store/authStore';
+
+
+
+
+
+
 interface ProfileProps {
   navigation: any;
 }
@@ -39,11 +46,14 @@ const DonorProfileScreen = ({ navigation }: ProfileProps) => {
     { id: '3', date: '05 Mai 2025', location: 'Hôpital Sud', status: 'Complété' },
   ];
 
+  const {logout} = useAuthStore()
+
   const handleLogout = () => {
     setShowLogoutModal(true);
   };
 
   const confirmLogout = () => {
+    logout()
     setShowLogoutModal(false);
     Alert.alert('Déconnexion', 'Vous avez été déconnecté avec succès');
     navigation.navigate('Login');

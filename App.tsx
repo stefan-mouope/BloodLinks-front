@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StatusBar, useColorScheme } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import AppNavigation from './src/Navigation/AppNavigation';
-import AppNavigator from './src/navigation/AppNavigator';
+// import { setupNotificationListeners } from './src/firabase/NotificationListener';
 
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
-
+ 
+  useEffect(()=>{
+    // setupNotificationListeners()
+  },[])
   return (
     <SafeAreaProvider>
       <StatusBar
@@ -14,7 +17,7 @@ const App = () => {
         backgroundColor="transparent"
         translucent
       />
-      <AppNavigator/>
+      <AppNavigation/>
     </SafeAreaProvider>
   );
 };

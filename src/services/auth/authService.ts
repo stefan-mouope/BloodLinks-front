@@ -11,6 +11,7 @@ const authService = {
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
       const response = await api.post('/users/login/', credentials);
+      console.log('response',response)
       return response.data;
     } catch (error) {
       if (error && typeof error === 'object' && 'response' in error) {

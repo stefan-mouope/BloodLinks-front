@@ -13,6 +13,21 @@ interface Request {
   urgency: 'Normal' | 'Urgent' | 'Critique';
 }
 
+
+//  <View style={styles.contributionCard}>
+//         <View style={styles.contributionHeader}>
+//           <Text style={{ fontSize: 32, marginRight: 8 }}>❤️</Text>
+//           <View>
+//             <Text style={styles.contributionLabel}>Votre contribution</Text>
+//             <Text style={styles.contributionValue}>8 dons</Text>
+//           </View>
+//         </View>
+//         <Text style={styles.contributionSubtext}>
+//           Prochain don disponible dans 45 jours
+//         </Text>
+//       </View>
+
+
 const DoctorPage = () => {
   const navigation = useNavigation<any>();
   const [activeTab, setActiveTab] = useState('Accueil');

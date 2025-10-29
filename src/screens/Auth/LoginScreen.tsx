@@ -5,12 +5,16 @@ import {
   ScrollView,
   StyleSheet,
   Alert,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Input } from '../../components/ui';
 import { theme } from '../../constants/theme';
-import { responsiveSize, responsiveFontSize, safeAreaPadding } from '../../utils/responsive';
+import {
+  responsiveSize,
+  responsiveFontSize,
+  safeAreaPadding,
+} from '../../utils/responsive';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../FirstPage/types';
@@ -21,7 +25,7 @@ type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'
 const LoginScreen = () => {
   const navigation = useNavigation<LoginScreenNavigationProp>();
   const { login, isLoading, error: authError } = useAuthStore();
-  
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -29,73 +33,59 @@ const LoginScreen = () => {
   const [errors, setErrors] = useState<Partial<typeof formData>>({});
 
   const handleInputChange = (field: keyof typeof formData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: undefined }));
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
   };
 
   const validateForm = (): boolean => {
     const newErrors: Partial<typeof formData> = {};
     if (!formData.email?.trim()) newErrors.email = 'Email requis';
-    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Veuillez entrer un email valide';
+    else if (!/\S+@\S+\.\S+/.test(formData.email))
+      newErrors.email = 'Veuillez entrer un email valide';
+
     if (!formData.password?.trim()) newErrors.password = 'Mot de passe requis';
-    else if (formData.password.length < 6) newErrors.password = 'Le mot de passe doit contenir au moins 6 caractères';
+    else if (formData.password.length < 6)
+      newErrors.password = 'Le mot de passe doit contenir au moins 6 caractères';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleLogin = async () => {
-    if (validateForm()) {
-      try {
-        const success = await login({
-          email: formData.email,
-          password: formData.password,
-        });
-        
-        if (success) {
-          // La navigation sera gérée automatiquement par le store/navigation guard
-          console.log('Connexion réussie');
-        }
-      } catch (err) {
-        console.error('Erreur connexion:', err);
-        Alert.alert(
-          'Erreur',
-          authError || 'Email ou mot de passe incorrect'
-        );
-      }
+    if (!validateForm()) return;
+
+    try {
+      await login(
+        {
+          email: formData.email.trim(),
+          password: formData.password.trim(),
+        },
+        navigation 
+      );
+
+      console.log('Connexion réussie');
+    } catch (err) {
+      console.error('Erreur connexion:', err);
+      Alert.alert('Erreur', authError || 'Email ou mot de passe incorrect');
     }
   };
 
-  const getContainerStyle = () => ({
-    flex: 1,
-    backgroundColor: theme.colors.background,
-    paddingHorizontal: safeAreaPadding(theme.spacing.lg),
-  });
-
-  const getFormStyle = () => ({
-    flex: 1,
-  });
-
-  const getFormContentStyle = () => ({
-    justifyContent: 'space-between' as const,
-    paddingBottom: responsiveSize(theme.spacing.xl),
-  });
-
-  const getErrorStyle = () => ({
-    fontSize: responsiveFontSize(theme.typography.fontSize.sm),
-    color: theme.colors.error,
-    textAlign: 'center' as const,
-    marginBottom: responsiveSize(theme.spacing.md),
-    paddingHorizontal: responsiveSize(theme.spacing.md),
-  });
-
   return (
-    <SafeAreaView style={getContainerStyle()}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: theme.colors.background,
+        paddingHorizontal: safeAreaPadding(theme.spacing.lg),
+      }}
+    >
       <ScrollView
-        style={getFormStyle()}
-        contentContainerStyle={getFormContentStyle()}
+        style={{ flex: 1 }}
+        contentContainerStyle={{
+          justifyContent: 'space-between',
+          paddingBottom: responsiveSize(theme.spacing.xl),
+        }}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
@@ -123,7 +113,7 @@ const LoginScreen = () => {
             error={errors.password}
           />
 
-          {authError && <Text style={getErrorStyle()}>{authError}</Text>}
+          {authError && <Text style={styles.errorText}>{authError}</Text>}
 
           <View style={styles.buttonContainer}>
             <Button
@@ -153,8 +143,6 @@ const styles = StyleSheet.create({
     color: theme.colors.textPrimary,
     marginBottom: theme.spacing.sm,
     textAlign: 'center',
-    fontWeight:theme.typography.fontWeight.bold
-    
   },
   subtitle: {
     fontSize: theme.typography.fontSize.base,
@@ -180,6 +168,14 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.fontSize.base,
     fontWeight: theme.typography.fontWeight.semiBold,
   },
+  errorText: {
+    fontSize: responsiveFontSize(theme.typography.fontSize.sm),
+    color: theme.colors.error,
+    textAlign: 'center',
+    marginBottom: responsiveSize(theme.spacing.md),
+    paddingHorizontal: responsiveSize(theme.spacing.md),
+  },
 });
 
 export default LoginScreen;
+  

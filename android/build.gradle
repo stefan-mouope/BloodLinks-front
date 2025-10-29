@@ -1,3 +1,7 @@
+// ================================
+// Fichier build.gradle (niveau projet)
+// ================================
+
 buildscript {
     ext {
         buildToolsVersion = "36.0.0"
@@ -7,15 +11,30 @@ buildscript {
         ndkVersion = "27.1.12297006"
         kotlinVersion = "2.1.20"
     }
+
+    // Repositories pour récupérer les dépendances
     repositories {
-        google()
-        mavenCentral()
+        google()       // Nécessaire pour Firebase et Android SDK
+        mavenCentral() // Pour d’autres librairies
     }
+
     dependencies {
+        // Plugin Gradle Android
         classpath("com.android.tools.build:gradle")
+
+        // Plugin React Native
         classpath("com.facebook.react:react-native-gradle-plugin")
+
+        // Plugin Kotlin
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
+
+        // -------------------------------
+        // Plugin Google Services pour Firebase
+        // -------------------------------
+        classpath("com.google.gms:google-services:4.4.4") 
+        // Ce plugin permet à Gradle de lire google-services.json
     }
 }
 
+// Plugin React Native à appliquer
 apply plugin: "com.facebook.react.rootproject"

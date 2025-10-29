@@ -1,5 +1,5 @@
 // screens/DonorDashboard.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -11,42 +11,85 @@ import {
   Alert,
 } from 'react-native';
 import { theme } from '../../constants/theme';
+import useNotificationListener from '../../firabase/useNotificationListener';
 
-interface AlertItem {
+interface AlertData {
   id: string;
   bloodType: string;
   hospital: string;
   distance: string;
   time: string;
-  urgency: 'Normal' | 'Urgent' | 'Critique';
+  urgency: string;
   units: number;
 }
 
 const DonorDashboard = ({ navigation }: any) => {
-  const [activeTab, setActiveTab] = useState('alertes');
-  const [notificationCount] = useState(2);
+  const [alerts, setAlerts] = useState<AlertData[]>([]);
+  const processedIds = useRef(new Set<string>()); // 🔥 Garde en mémoire les IDs traités
 
-  const alerts: AlertItem[] = [
-    {
-      id: '1',
-      bloodType: 'A+',
-      hospital: 'Hôpital Central',
-      distance: '2.5 km',
-      time: 'Il y a 5 min',
-      urgency: 'Critique',
-      units: 2,
-    },
-    {
-      id: '2',
-      bloodType: 'A+',
-      hospital: 'Clinique Est',
-      distance: '5.1 km',
-      time: 'Il y a 1h',
-      urgency: 'Urgent',
-      units: 1,
-    },
-  ];
+  // 🔥 Callback pour recevoir les notifications
+  const handleNotification = useCallback((data: any) => {
+    console.log('🧠 Nouvelle donnée Firebase reçue:', data);
 
+    // Génère un ID unique basé sur les données
+    const uniqueId = data.id || `${data.bloodType}-${data.hospital}-${Date.now()}`;
+
+    // 🚫 Vérifie si déjà traité
+    if (processedIds.current.has(uniqueId)) {
+      console.log('⏭️ Notification déjà traitée, skip:', uniqueId);
+      return;
+    }
+
+    // Marque comme traité
+    processedIds.current.add(uniqueId);
+
+    const newAlert: AlertData = {
+      id: uniqueId,
+      bloodType: data.bloodType || 'Inconnu',
+      hospital: data.hospital || 'Non spécifié',
+      distance: data.distance || '—',
+      time: 'Maintenant',
+      urgency: data.urgency || 'Normal',
+      units: Number(data.units) || 1,
+    };
+
+    setAlerts((prev) => {
+      // Double vérification pour éviter les doublons dans l'état
+      const exists = prev.some((alert) => alert.id === newAlert.id);
+      if (exists) {
+        console.log('⚠️ Alerte déjà dans la liste:', newAlert.id);
+        return prev;
+      }
+      
+      console.log('✅ Ajout de la nouvelle alerte:', newAlert.id);
+      return [newAlert, ...prev]; // ajoute en haut de la liste
+    });
+
+    // Nettoie l'ID après 10 secondes pour permettre les duplicatas ultérieurs
+    setTimeout(() => {
+      processedIds.current.delete(uniqueId);
+    }, 10000);
+  }, []);
+
+  // 🎯 Active le listener avec le callback (UNE SEULE FOIS)
+  useNotificationListener(handleNotification);
+
+  // Exemple : notification simulée par défaut (optionnel - à retirer en prod)
+  useEffect(() => {
+    setAlerts([
+      {
+        id: 'demo-1',
+        bloodType: 'A+',
+        hospital: 'Hôpital Central',
+        distance: '2.5 km',
+        time: 'Il y a 5 min',
+        urgency: 'Critique',
+        units: 2,
+      },
+    ]);
+  }, []);
+
+  // Fonction pour attribuer les couleurs selon l'urgence
   const getUrgencyColor = (urgency: string) => {
     switch (urgency) {
       case 'Critique':
@@ -60,58 +103,54 @@ const DonorDashboard = ({ navigation }: any) => {
     }
   };
 
-  const handleAccept = (alert: AlertItem) => {
+  // Lorsqu'un donneur accepte une demande
+  const handleAccept = useCallback((alert: AlertData) => {
     Alert.alert(
       'Confirmer le don',
-      `Vous confirmez votre disponibilité pour donner du sang ${alert.bloodType} à ${alert.hospital}?`,
+      `Confirmez-vous votre disponibilité pour donner du sang ${alert.bloodType} à ${alert.hospital} ?`,
       [
         { text: 'Annuler', style: 'cancel' },
         {
           text: 'Confirmer',
           onPress: () => {
-            Alert.alert(
-              'Merci!',
-              'Votre confirmation a été envoyée. Vous recevrez les détails par SMS.',
-              [{ text: 'OK' }]
-            );
+            // Retire l'alerte de la liste
+            setAlerts((prev) => prev.filter((a) => a.id !== alert.id));
+            Alert.alert('Merci !', 'Votre confirmation a été envoyée.', [
+              { text: 'OK' },
+            ]);
           },
         },
       ]
     );
-  };
+  }, []);
 
-  const handleDecline = (alert: AlertItem) => {
+  // Lorsqu'un donneur refuse une demande
+  const handleDecline = useCallback((alert: AlertData) => {
+    // Retire l'alerte de la liste
+    setAlerts((prev) => prev.filter((a) => a.id !== alert.id));
     Alert.alert('Refusé', 'Vous avez décliné cette demande de don.');
-  };
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={theme.colors.primary} />
-      <View style={styles.contributionCard}>
-        <View style={styles.contributionHeader}>
-          <Text style={{ fontSize: 32, marginRight: 8 }}>❤️</Text>
-          <View>
-            <Text style={styles.contributionLabel}>Votre contribution</Text>
-            <Text style={styles.contributionValue}>8 dons</Text>
-          </View>
-        </View>
-        <Text style={styles.contributionSubtext}>
-          Prochain don disponible dans 45 jours
+      <ScrollView style={styles.content}>
+        <Text style={styles.sectionTitle}>
+          Alertes reçues ({alerts.length})
         </Text>
-      </View>
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        <Text style={styles.sectionTitle}>Alertes reçues</Text>
+
+        {alerts.length === 0 && (
+          <View style={styles.emptyState}>
+            <Text style={styles.emptyText}>🔔 Aucune alerte pour le moment</Text>
+          </View>
+        )}
+
         {alerts.map((alert) => {
           const urgencyColors = getUrgencyColor(alert.urgency);
           return (
-            <View
-              key={alert.id}
-              style={[styles.alertCard, { borderColor: urgencyColors.bg }]}
-            >
+            <View key={alert.id} style={[styles.alertCard, { borderColor: urgencyColors.bg }]}>
               <View style={styles.alertHeader}>
-                <View
-                  style={[styles.bloodIconContainer, { backgroundColor: urgencyColors.bg }]}
-                >
+                <View style={[styles.bloodIconContainer, { backgroundColor: urgencyColors.bg }]}>
                   <Text style={{ fontSize: 24 }}>🩸</Text>
                 </View>
                 <View style={styles.alertInfo}>
@@ -123,6 +162,7 @@ const DonorDashboard = ({ navigation }: any) => {
                   <Text style={styles.infoText}>🩸 {alert.units} unités requises</Text>
                 </View>
               </View>
+
               <View style={styles.actionButtons}>
                 <TouchableOpacity
                   style={styles.acceptButton}
@@ -131,6 +171,7 @@ const DonorDashboard = ({ navigation }: any) => {
                   <Text style={{ fontSize: 20, marginRight: 4 }}>✅</Text>
                   <Text style={styles.acceptButtonText}>Accepter</Text>
                 </TouchableOpacity>
+
                 <TouchableOpacity
                   style={styles.declineButton}
                   onPress={() => handleDecline(alert)}
@@ -142,215 +183,102 @@ const DonorDashboard = ({ navigation }: any) => {
             </View>
           );
         })}
-        {alerts.length === 0 && (
-          <View style={styles.emptyState}>
-            <Text style={{ fontSize: 64 }}>🔕</Text>
-            <Text style={styles.emptyStateTitle}>Aucune alerte</Text>
-            <Text style={styles.emptyStateText}>
-              Vous recevrez une notification quand votre sang sera requis
-            </Text>
-          </View>
-        )}
       </ScrollView>
-      <View style={styles.bottomNav}>
-        <TouchableOpacity
-          style={styles.navItem}
-          onPress={() => {
-            setActiveTab('alertes');
-            navigation.navigate('DonorDashboard');
-          }}
-        >
-          <Text style={{ fontSize: 24 }}>🔔</Text>
-          <Text
-            style={[
-              styles.navText,
-              activeTab === 'alertes' && { color: theme.colors.primary },
-            ]}
-          >
-            Alertes
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.navItem}
-          onPress={() => {
-            setActiveTab('historique');
-            navigation.navigate('History');
-          }}
-        >
-          <Text style={{ fontSize: 24 }}>⏱️</Text>
-          <Text
-            style={[
-              styles.navText,
-              activeTab === 'historique' && { color: theme.colors.primary },
-            ]}
-          >
-            Historique
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.navItem}
-          onPress={() => {
-            setActiveTab('profil');
-            navigation.navigate('donorprofile');
-          }}
-        >
-          <Text style={{ fontSize: 24 }}>👤</Text>
-          <Text
-            style={[
-              styles.navText,
-              activeTab === 'profil' && { color: theme.colors.primary },
-            ]}
-          >
-            Profil
-          </Text>
-        </TouchableOpacity>
-      </View>
     </SafeAreaView>
   );
 };
 
+export default DonorDashboard;
+
+// =======================
+// STYLES
+// =======================
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
-  contributionCard: {
-    backgroundColor: theme.colors.primary,
-    marginHorizontal: theme.spacing.md,
-    marginVertical: theme.spacing.lg,
-    padding: theme.spacing.md,
-    borderRadius: theme.borderRadius.lg,
-    ...theme.shadows.lg,
+  container: {
+    flex: 1,
+    backgroundColor: theme.colors.background,
   },
-  contributionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: theme.spacing.md,
-    marginBottom: theme.spacing.sm,
+  content: {
+    padding: 16,
   },
-  contributionLabel: {
-    fontSize: theme.typography.fontSize.sm,
-    color: theme.colors.white,
-    opacity: 0.9,
-  },
-  contributionValue: {
-    fontSize: theme.typography.fontSize['2xl'],
-    fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.white,
-  },
-  contributionSubtext: {
-    fontSize: theme.typography.fontSize.sm,
-    color: theme.colors.white,
-    opacity: 0.9,
-  },
-  content: { flex: 1, backgroundColor: theme.colors.gray50 },
   sectionTitle: {
-    fontSize: theme.typography.fontSize.lg,
-    fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.textPrimary,
-    paddingHorizontal: theme.spacing.md,
-    paddingBottom: theme.spacing.md,
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: theme.colors.primary,
+    marginBottom: 12,
+  },
+  emptyState: {
+    padding: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyText: {
+    fontSize: 16,
+    color: theme.colors.gray600,
+    textAlign: 'center',
   },
   alertCard: {
-    backgroundColor: theme.colors.white,
-    marginHorizontal: theme.spacing.md,
-    marginBottom: theme.spacing.md,
-    padding: theme.spacing.md,
-    borderRadius: theme.borderRadius.lg,
-    borderWidth: 2,
-    ...theme.shadows.sm,
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 16,
+    backgroundColor: '#fff',
   },
   alertHeader: {
     flexDirection: 'row',
-    gap: theme.spacing.md,
-    marginBottom: theme.spacing.md,
+    alignItems: 'center',
   },
   bloodIconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: theme.borderRadius.full,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  alertInfo: { flex: 1 },
+  alertInfo: {
+    flex: 1,
+    marginLeft: 12,
+  },
   alertTitle: {
-    fontSize: theme.typography.fontSize.lg,
-    fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.textPrimary,
-    marginBottom: theme.spacing.xs,
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 4,
   },
   infoText: {
-    fontSize: theme.typography.fontSize.sm,
-    color: theme.colors.textSecondary,
-    marginBottom: 2,
+    fontSize: 14,
+    color: theme.colors.gray700,
   },
   actionButtons: {
     flexDirection: 'row',
-    gap: theme.spacing.sm,
+    justifyContent: 'space-between',
+    marginTop: 12,
   },
   acceptButton: {
-    flex: 1,
-    backgroundColor: theme.colors.primary,
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: '#48BB78',
+    padding: 10,
+    borderRadius: 8,
+    flex: 1,
+    marginRight: 8,
     justifyContent: 'center',
-    paddingVertical: theme.spacing.md,
-    borderRadius: theme.borderRadius.lg,
-    gap: theme.spacing.sm,
-  },
-  acceptButtonText: {
-    color: theme.colors.white,
-    fontSize: theme.typography.fontSize.base,
-    fontWeight: theme.typography.fontWeight.semiBold,
   },
   declineButton: {
-    flex: 1,
-    backgroundColor: theme.colors.gray200,
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: '#E53E3E',
+    padding: 10,
+    borderRadius: 8,
+    flex: 1,
+    marginLeft: 8,
     justifyContent: 'center',
-    paddingVertical: theme.spacing.md,
-    borderRadius: theme.borderRadius.lg,
-    gap: theme.spacing.sm,
+  },
+  acceptButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
   declineButtonText: {
-    color: theme.colors.gray600,
-    fontSize: theme.typography.fontSize.base,
-    fontWeight: theme.typography.fontWeight.semiBold,
-  },
-  emptyState: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: theme.spacing['4xl'],
-    paddingHorizontal: theme.spacing.xl,
-  },
-  emptyStateTitle: {
-    fontSize: theme.typography.fontSize.xl,
-    fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.textSecondary,
-    marginTop: theme.spacing.md,
-    marginBottom: theme.spacing.sm,
-  },
-  emptyStateText: {
-    fontSize: theme.typography.fontSize.base,
-    color: theme.colors.textTertiary,
-    textAlign: 'center',
-  },
-  bottomNav: {
-    flexDirection: 'row',
-    backgroundColor: theme.colors.white,
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.border,
-    paddingVertical: theme.spacing.md,
-    paddingHorizontal: theme.spacing.md,
-    justifyContent: 'space-around',
-  },
-  navItem: {
-    alignItems: 'center',
-    gap: 4,
-  },
-  navText: {
-    fontSize: theme.typography.fontSize.xs,
-    color: theme.colors.textSecondary,
-    marginTop: 2,
+    color: '#fff',
+    fontWeight: 'bold',
   },
 });
-
-export default DonorDashboard;

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, ActivityIndicator } from 'react-native';
-import { AlertService} from '../services/AlertService';
+import { AlertService} from '../services/notifications/AlertService';
 import { Alerte } from '../types/data';
 
 const AlertesScreen = () => {

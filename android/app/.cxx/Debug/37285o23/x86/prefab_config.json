@@ -2,8 +2,8 @@
   "enabled": true,
   "prefabPath": "/home/lavue/.gradle/caches/modules-2/files-2.1/com.google.prefab/cli/2.1.0/aa32fec809c44fa531f01dcfb739b5b3304d3050/cli-2.1.0-all.jar",
   "packages": [
-    "/home/lavue/.gradle/caches/9.0.0/transforms/1e84847373c8b60ddb3f088099977c2a/transformed/react-android-0.82.1-debug/prefab",
-    "/home/lavue/.gradle/caches/9.0.0/transforms/2b2a34f399e6566a4bc7f9555d03a28a/transformed/hermes-android-0.82.1-debug/prefab",
-    "/home/lavue/.gradle/caches/9.0.0/transforms/5fa135f9220cf0ae1e3ee40cd371125b/transformed/fbjni-0.7.0/prefab"
+    "/home/lavue/.gradle/caches/9.0.0/transforms/7461f2d19e7f6de40d7f58d026a52b85/transformed/react-android-0.82.1-debug/prefab",
+    "/home/lavue/.gradle/caches/9.0.0/transforms/49151956c4ff43b077391c1ef3566f51/transformed/hermes-android-0.82.1-debug/prefab",
+    "/home/lavue/.gradle/caches/9.0.0/transforms/65b450ef598dce09a7a393e5d7e99f2c/transformed/fbjni-0.7.0/prefab"
   ]
 }

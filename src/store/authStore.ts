@@ -2,12 +2,17 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import authService from '../services/auth/authService';
-import { AuthState, User, LoginCredentials, RegisterData } from '../types/auth';
+import { AuthState, LoginCredentials, RegisterData } from '../types/auth';
+import { NavigationProp } from '@react-navigation/native';
+// import { RootStackParamList } from '../navigation/AppNavigator';
+import { Alert } from 'react-native';
+import { RootStackParamList } from '../screens/FirstPage/types';
+
+let _hasHydrated = false;
 
 const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
-      // État initial
       user: null,
       accessToken: null,
       refreshToken: null,
@@ -15,11 +20,15 @@ const useAuthStore = create<AuthState>()(
       isLoading: false,
       error: null,
 
-      // Connexion
-      login: async (credentials: LoginCredentials) => {
+      // 🔐 Connexion
+      login: async (
+        credentials: LoginCredentials,
+        navigation?: NavigationProp<RootStackParamList>
+      ) => {
         set({ isLoading: true, error: null });
         try {
           const { user, access, refresh } = await authService.login(credentials);
+          console.log(user,access,refresh)
           set({
             user,
             accessToken: access,
@@ -28,21 +37,48 @@ const useAuthStore = create<AuthState>()(
             isLoading: false,
             error: null,
           });
+
+          // ✅ Navigation après connexion selon le rôle
+          if (navigation) {
+            switch (user.user_type) {
+              case 'donneur':
+                navigation.navigate('donor');
+                break;
+              case 'docteur':
+                navigation.navigate('doctor');
+                break;
+              case 'banque':
+                navigation.navigate('banque');
+                break;
+              default:
+                navigation.navigate('Home'); // Fallback
+                break;
+            }
+          }
+
           return user;
         } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : 'Échec de la connexion';
-          set({ error: errorMessage, isLoading: false, isAuthenticated: false });
+          const errorMessage =
+            error instanceof Error ? error.message : 'Échec de la connexion';
+          set({
+            error: errorMessage,
+            isLoading: false,
+            isAuthenticated: false,
+          });
           throw error;
         }
       },
 
-      // Inscription
-      register: async (userData: RegisterData) => {
+      // 🧾 Inscription
+      register: async (
+        userData: RegisterData,
+        navigation?: NavigationProp<RootStackParamList>
+      ) => {
         set({ isLoading: true, error: null });
         try {
           const response = await authService.register(userData);
-          
-          // Si l'inscription retourne les tokens, connecter l'utilisateur
+
+          // Si le backend retourne aussi les tokens → connexion automatique
           if (response.access && response.refresh) {
             set({
               user: response.user,
@@ -52,23 +88,44 @@ const useAuthStore = create<AuthState>()(
               isLoading: false,
               error: null,
             });
+
+            //  Navigation après inscription selon le rôle
+            if (navigation) {
+              switch (response.user.user_type) {
+                case 'donneur':
+                  navigation.navigate('donor');
+                  break;
+                case 'docteur':
+                  navigation.navigate('login');
+                  break;
+                case 'banque':
+                  navigation.navigate('login');
+                  break;
+                default:
+                  navigation.navigate('Home');
+                  break;
+              }
+            }
+
             return response.user;
           }
-          
-          // Sinon, juste indiquer le succès
-          set({
-            isLoading: false,
-            error: null,
-          });
+
+          // Si le backend ne renvoie pas de tokens → succès sans connexion
+          set({ isLoading: false, error: null });
           return response.user;
         } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : "Échec de l'inscription";
-          set({ error: errorMessage, isLoading: false, isAuthenticated: false });
+          const errorMessage =
+            error instanceof Error ? error.message : "Échec de l'inscription";
+          set({
+            error: errorMessage,
+            isLoading: false,
+            isAuthenticated: false,
+          });
           throw error;
         }
       },
 
-      // Déconnexion
+      // 🚪 Déconnexion
       logout: async () => {
         set({ isLoading: true });
         try {
@@ -85,40 +142,37 @@ const useAuthStore = create<AuthState>()(
             error: null,
           });
         }
+        
       },
 
-      // Vérification de l'authentification
-      checkAuth: async () => {
-        const { accessToken } = get();
-        if (!accessToken) {
-          set({ isAuthenticated: false, isLoading: false });
-          return false;
-        }
+      // 🔍 Vérification de l’authentification
+   checkAuth: async () => {
+  const { user, accessToken, refreshToken } = get();
+// Alert.alert('test')
+console.log(user)
+  // Si aucune donnée n’est enregistrée → pas connecté
+  if (!user || !accessToken || !refreshToken) {
+    set({
+      isAuthenticated: false,
+      isLoading: false,
+    });
+    return false;
+  }
 
-        set({ isLoading: true });
-        try {
-          const user = await authService.getProfile();
-          set({ 
-            user, 
-            isAuthenticated: true, 
-            isLoading: false,
-            error: null,
-          });
-          return true;
-        } catch (error) {
-          console.error('Erreur lors de la vérification de l\'authentification:', error);
-          set({ 
-            user: null,
-            isAuthenticated: false, 
-            isLoading: false,
-            accessToken: null,
-            refreshToken: null,
-          });
-          return false;
-        }
-      },
+  // Sinon, on considère l’utilisateur comme connecté
+  set({
+    isAuthenticated: true,
+    isLoading: false,
+    user,
+    accessToken,
+    refreshToken,
+    error: null,
+  });
 
-      // Rafraîchissement du token
+  return true;
+},
+
+      // 🔁 Rafraîchissement du token
       refreshAccessToken: async () => {
         const { refreshToken } = get();
         if (!refreshToken) {
@@ -132,7 +186,6 @@ const useAuthStore = create<AuthState>()(
           return access;
         } catch (error) {
           console.error('Erreur lors du rafraîchissement du token:', error);
-          // En cas d'erreur de rafraîchissement, déconnecter l'utilisateur
           await get().logout();
           return null;
         }
@@ -140,40 +193,20 @@ const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'auth-storage',
-      storage: createJSONStorage(() => ({
-        getItem: async (name: string) => {
-          try {
-            const value = await AsyncStorage.getItem(name);
-            return value;
-          } catch (error) {
-            console.error('Erreur lors de la lecture du storage:', error);
-            return null;
-          }
-        },
-        setItem: async (name: string, value: string) => {
-          try {
-            await AsyncStorage.setItem(name, value);
-          } catch (error) {
-            console.error('Erreur lors de l\'écriture du storage:', error);
-          }
-        },
-        removeItem: async (name: string) => {
-          try {
-            await AsyncStorage.removeItem(name);
-          } catch (error) {
-            console.error('Erreur lors de la suppression du storage:', error);
-          }
-        },
-      })),
-      // Ne persister que les données nécessaires
+      storage: createJSONStorage(() => AsyncStorage),
       partialize: (state: AuthState) => ({
         user: state.user,
         accessToken: state.accessToken,
         refreshToken: state.refreshToken,
         isAuthenticated: state.isAuthenticated,
       }),
+      onRehydrateStorage: () => () => {
+        _hasHydrated = true;
+        console.log('Rehydration terminée ✅');
+      },
     }
   )
 );
 
+export { _hasHydrated };
 export default useAuthStore;
