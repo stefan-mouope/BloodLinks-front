@@ -1,15 +1,28 @@
-import React, { useEffect } from 'react';
+// App.tsx
+import React, { useEffect, useState } from 'react';
 import { StatusBar, useColorScheme } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import AppNavigation from './src/Navigation/AppNavigation';
-// import { setupNotificationListeners } from './src/firabase/NotificationListener';
+import useAuthStore, { _hasHydrated } from './src/store/authStore';
 
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
- 
-  useEffect(()=>{
-    // setupNotificationListeners()
-  },[])
+  const [isReady, setIsReady] = useState(false);
+  const checkAuth = useAuthStore((state) => state.checkAuth);
+
+  useEffect(() => {
+    const waitForHydration = setInterval(() => {
+      if (_hasHydrated) {
+        clearInterval(waitForHydration);
+        checkAuth();
+        setIsReady(true);
+      }
+    }, 100);
+    return () => clearInterval(waitForHydration);
+  }, []);
+
+  if (!isReady) return null; // ou un splash screen
+
   return (
     <SafeAreaProvider>
       <StatusBar
@@ -17,7 +30,7 @@ const App = () => {
         backgroundColor="transparent"
         translucent
       />
-      <AppNavigation/>
+      <AppNavigation />
     </SafeAreaProvider>
   );
 };

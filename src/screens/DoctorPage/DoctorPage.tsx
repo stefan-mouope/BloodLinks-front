@@ -1,5 +1,5 @@
 // screens/DoctorPage.tsx
-import React, { useState } from 'react';
+import React from 'react';
 import { SafeAreaView, ScrollView, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { theme } from '../../constants/theme';
 import { useNavigation } from '@react-navigation/native';
@@ -13,24 +13,8 @@ interface Request {
   urgency: 'Normal' | 'Urgent' | 'Critique';
 }
 
-
-//  <View style={styles.contributionCard}>
-//         <View style={styles.contributionHeader}>
-//           <Text style={{ fontSize: 32, marginRight: 8 }}>❤️</Text>
-//           <View>
-//             <Text style={styles.contributionLabel}>Votre contribution</Text>
-//             <Text style={styles.contributionValue}>8 dons</Text>
-//           </View>
-//         </View>
-//         <Text style={styles.contributionSubtext}>
-//           Prochain don disponible dans 45 jours
-//         </Text>
-//       </View>
-
-
 const DoctorPage = () => {
   const navigation = useNavigation<any>();
-  const [activeTab, setActiveTab] = useState('Accueil');
 
   const requests: Request[] = [
     { id: '1', bloodType: 'A+', hospital: 'Hôpital Central', units: 2, status: 'En attente', urgency: 'Urgent' },
@@ -58,6 +42,7 @@ const DoctorPage = () => {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.content}>
+        {/* Bouton Créer une requête */}
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={styles.createButton}
@@ -67,6 +52,8 @@ const DoctorPage = () => {
             <Text style={styles.createButtonText}>Créer une nouvelle requête</Text>
           </TouchableOpacity>
         </View>
+
+        {/* Liste des requêtes */}
         <Text style={styles.sectionTitle}>Mes requêtes</Text>
         {requests.map((request) => {
           const urgencyColors = getUrgencyColor(request.urgency);
@@ -89,59 +76,6 @@ const DoctorPage = () => {
           );
         })}
       </ScrollView>
-      <View style={styles.bottomNav}>
-        <TouchableOpacity
-          style={styles.navItem}
-          onPress={() => {
-            setActiveTab('Accueil');
-            navigation.navigate('DoctorPage');
-          }}
-        >
-          <Text style={{ fontSize: 24 }}>🏠</Text>
-          <Text
-            style={[
-              styles.navText,
-              activeTab === 'Accueil' && { color: theme.colors.primary },
-            ]}
-          >
-            Accueil
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.navItem}
-          onPress={() => {
-            setActiveTab('Historique');
-            navigation.navigate('History');
-          }}
-        >
-          <Text style={{ fontSize: 24 }}>⏱️</Text>
-          <Text
-            style={[
-              styles.navText,
-              activeTab === 'Historique' && { color: theme.colors.primary },
-            ]}
-          >
-            Historique
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.navItem}
-          onPress={() => {
-            setActiveTab('Profil');
-            navigation.navigate('doctorprofile');
-          }}
-        >
-          <Text style={{ fontSize: 24 }}>👤</Text>
-          <Text
-            style={[
-              styles.navText,
-              activeTab === 'Profil' && { color: theme.colors.primary },
-            ]}
-          >
-            Profil
-          </Text>
-        </TouchableOpacity>
-      </View>
     </SafeAreaView>
   );
 };
@@ -202,24 +136,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   status: { fontWeight: '600' },
-  bottomNav: {
-    flexDirection: 'row',
-    backgroundColor: theme.colors.white,
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.border,
-    paddingVertical: theme.spacing.md,
-    paddingHorizontal: theme.spacing.md,
-    justifyContent: 'space-around',
-  },
-  navItem: {
-    alignItems: 'center',
-    gap: 4,
-  },
-  navText: {
-    fontSize: theme.typography.fontSize.xs,
-    color: theme.colors.textSecondary,
-    marginTop: 2,
-  },
 });
 
 export default DoctorPage;

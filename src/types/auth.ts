@@ -9,6 +9,8 @@ export interface User {
   id: number;
   email: string;
   user_type: RoleType;
+  groupe_sanguin?:string;
+  nom?:string;
 }
 
 // Interface pour les données de connexion

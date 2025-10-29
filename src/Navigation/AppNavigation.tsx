@@ -1,122 +1,102 @@
-import React, { useEffect } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+// AppNavigation.tsx
+import React from 'react';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-import { ActivityIndicator, View } from 'react-native';
+import { Text } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
 import useAuthStore from '../store/authStore';
 
-import { RootStackParamList } from '../screens/FirstPage/types.ts';
-import Header from '../components/ui/Header';
-import useNotification from '../firabase/useNotification';
+import DoctorPage from '../screens/DoctorPage/DoctorPage';
+import DoctorProfileScreen from '../screens/profiles/DoctorProfileScreen';
+import CreateRequestScreen from '../screens/DoctorPage/CreateRequestScreen';
 
-// Auth & Onboarding
-import OnboardingScreen from '../screens/onboarding/Onboarding.tsx';
-import FirstPageScreen from '../screens/FirstPage/FirstPageScreen.tsx';
+import DonorDashboard from '../screens/DonneurPage/DonorDashboard';
+import DonorProfileScreen from '../screens/profiles/DonorProfileScreen';
+
+import BloodBankDashboard from '../screens/BloodBank/BloodBankDashboard';
+import BankProfileScreen from '../screens/profiles/BankProfileScreen';
+
+import OnboardingScreen from '../screens/onboarding/Onboarding';
+import FirstPageScreen from '../screens/FirstPage/FirstPageScreen';
 import LoginScreen from '../screens/Auth/LoginScreen';
-import SignUpScreen from '../screens/Auth/SignUpScreen.tsx';
+import SignUpScreen from '../screens/Auth/SignUpScreen';
 
-// Dashboards
-import DoctorPage from '../screens/DoctorPage/DoctorPage.tsx';
-import CreateRequestScreen from '../screens/DoctorPage/CreateRequestScreen.tsx';
-import BloodBankDashboard from '../screens/BloodBank/BloodBankDashboard.tsx';
-import DonorDashboard from '../screens/DonneurPage/DonorDashboard.tsx';
+const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
-// Profiles
-import DoctorProfileScreen from '../screens/profiles/DoctorProfileScreen.tsx';
-import DonorProfileScreen from '../screens/profiles/DonorProfileScreen.tsx';
-import BankProfileScreen from '../screens/profiles/BankProfileScreen.tsx';
+// ─── Bottom Tabs par type d'utilisateur ───
+const DoctorTabs = () => (
+  <Tab.Navigator screenOptions={{ headerShown: false }}>
+    <Tab.Screen
+      name="DoctorHome"
+      component={DoctorPage}
+      options={{ tabBarLabel: 'Accueil', tabBarIcon: () => <Text style={{ fontSize: 24 }}>🏠</Text> }}
+    />
+    <Tab.Screen
+      name="DoctorProfile"
+      component={DoctorProfileScreen}
+      options={{ tabBarLabel: 'Profil', tabBarIcon: () => <Text style={{ fontSize: 24 }}>👤</Text> }}
+    />
+  </Tab.Navigator>
+);
 
-const Stack = createStackNavigator<RootStackParamList>();
+const DonorTabs = () => (
+  <Tab.Navigator screenOptions={{ headerShown: false }}>
+    <Tab.Screen
+      name="DonorHome"
+      component={DonorDashboard}
+      options={{ tabBarLabel: 'Accueil', tabBarIcon: () => <Text style={{ fontSize: 24 }}>🏠</Text> }}
+    />
+    <Tab.Screen
+      name="DonorProfile"
+      component={DonorProfileScreen}
+      options={{ tabBarLabel: 'Profil', tabBarIcon: () => <Text style={{ fontSize: 24 }}>👤</Text> }}
+    />
+  </Tab.Navigator>
+);
 
-const AppNavigation = () => {
-  const { isAuthenticated, user, checkAuth, isLoading } = useAuthStore();
+const BankTabs = () => (
+  <Tab.Navigator screenOptions={{ headerShown: false }}>
+    <Tab.Screen
+      name="BankHome"
+      component={BloodBankDashboard}
+      options={{ tabBarLabel: 'Accueil', tabBarIcon: () => <Text style={{ fontSize: 24 }}>🏠</Text> }}
+    />
+    <Tab.Screen
+      name="BankProfile"
+      component={BankProfileScreen}
+      options={{ tabBarLabel: 'Profil', tabBarIcon: () => <Text style={{ fontSize: 24 }}>👤</Text> }}
+    />
+  </Tab.Navigator>
+);
 
-  // Initialiser les notifications pour l'utilisateur connecté
-  useNotification(user?.id || null);
-
-  // Vérifie l'état d'authentification au montage
-  useEffect(() => {
-    checkAuth();
-  }, []);
-
-  // Pendant le chargement, on affiche un petit loader
-  if (isLoading) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color="red" />
-      </View>
-    );
-  }
+// ─── Stack principal dynamique ───
+const AppStack = () => {
+  const { isAuthenticated, user } = useAuthStore();
 
   return (
     <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          header: (props) => <Header {...props} />,
-          headerShown: true,
-        }}
-      >
-        {/* 🔹 Si utilisateur connecté */}
-        {isAuthenticated && user ? (
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        {!isAuthenticated || !user ? (
           <>
-            {user.user_type === 'docteur' && (
-              <>
-                <Stack.Screen
-                  name="DoctorPage"
-                  component={DoctorPage}
-                  options={{ headerShown: false }}
-                />
-                <Stack.Screen name="doctorprofile" component={DoctorProfileScreen} />
-                <Stack.Screen name="CreateRequest" component={CreateRequestScreen} />
-              </>
-            )}
-
-            {user.user_type === 'banque' && (
-              <>
-                <Stack.Screen
-                  name="bloodbank"
-                  component={BloodBankDashboard}
-                  options={{ headerShown: false }}
-                />
-                <Stack.Screen name="bankprofile" component={BankProfileScreen} />
-              </>
-            )}
-
-            {user.user_type === 'donneur' && (
-              <>
-                <Stack.Screen
-                  name="donor"
-                  component={DonorDashboard}
-                  options={{ headerShown: false }}
-                />
-                <Stack.Screen name="donorprofile" component={DonorProfileScreen} />
-              </>
-            )}
-          </>
-        ) : (
-          // 🔹 Sinon (utilisateur non connecté)
-          <>
-            <Stack.Screen
-              name="Onboarding"
-              component={OnboardingScreen}
-              initialParams={{ step: 1 }}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="FirstPage"
-              component={FirstPageScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="Login"
-              component={LoginScreen}
-              options={{ title: 'BloodLink' }}
-            />
+            <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+            <Stack.Screen name="FirstPage" component={FirstPageScreen} />
+            <Stack.Screen name="Login" component={LoginScreen} />
             <Stack.Screen name="SignUp" component={SignUpScreen} />
           </>
-        )}
+        ) : user.user_type === 'docteur' ? (
+          <>
+            <Stack.Screen name="DoctorTabs" component={DoctorTabs} />
+            <Stack.Screen name="CreateRequest" component={CreateRequestScreen} />
+          </>
+        ) : user.user_type === 'donneur' ? (
+          <Stack.Screen name="DonorTabs" component={DonorTabs} />
+        ) : user.user_type === 'banque' ? (
+          <Stack.Screen name="BankTabs" component={BankTabs} />
+        ) : null}
       </Stack.Navigator>
     </NavigationContainer>
   );
 };
 
-export default AppNavigation;
+export default AppStack;

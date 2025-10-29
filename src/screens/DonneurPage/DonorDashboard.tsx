@@ -1,5 +1,4 @@
-// screens/DonorDashboard.tsx
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   View,
   Text,
@@ -9,180 +8,133 @@ import {
   SafeAreaView,
   StatusBar,
   Alert,
-} from 'react-native';
-import { theme } from '../../constants/theme';
-import useNotificationListener from '../../firabase/useNotificationListener';
+} from "react-native";
+import { theme } from "../../constants/theme";
+import useNotificationListener from "../../firabase/useNotificationListener";
+import { useAlertes } from "../../hooks/useAlertes"; 
+import { Alerte } from "../../types/data";
+import useAuthStore from "../../store/authStore";
 
-interface AlertData {
-  id: string;
-  bloodType: string;
-  hospital: string;
-  distance: string;
-  time: string;
-  urgency: string;
-  units: number;
-}
+const DonorDashboard = () => {
+  const {user} = useAuthStore()
+  const groupeSanguin = user?.groupe_sanguin || 'O+'; // à remplacer par celui du donneur connecté
+  const { alertes, loading, refresh, updateStatut } = useAlertes(groupeSanguin);
+  const processedIds = useRef(new Set<string>());
 
-const DonorDashboard = ({ navigation }: any) => {
-  const [alerts, setAlerts] = useState<AlertData[]>([]);
-  const processedIds = useRef(new Set<string>()); // 🔥 Garde en mémoire les IDs traités
+  const handleNotification = useCallback(
+    async (data: any) => {
+      const uniqueId = data.id || `${data.bloodType}-${Date.now()}`;
+      if (processedIds.current.has(uniqueId)) return;
+      processedIds.current.add(uniqueId);
+      await refresh();
+      setTimeout(() => processedIds.current.delete(uniqueId), 5000);
+    },
+    [refresh]
+  );
 
-  // 🔥 Callback pour recevoir les notifications
-  const handleNotification = useCallback((data: any) => {
-    console.log('🧠 Nouvelle donnée Firebase reçue:', data);
-
-    // Génère un ID unique basé sur les données
-    const uniqueId = data.id || `${data.bloodType}-${data.hospital}-${Date.now()}`;
-
-    // 🚫 Vérifie si déjà traité
-    if (processedIds.current.has(uniqueId)) {
-      console.log('⏭️ Notification déjà traitée, skip:', uniqueId);
-      return;
-    }
-
-    // Marque comme traité
-    processedIds.current.add(uniqueId);
-
-    const newAlert: AlertData = {
-      id: uniqueId,
-      bloodType: data.bloodType || 'Inconnu',
-      hospital: data.hospital || 'Non spécifié',
-      distance: data.distance || '—',
-      time: 'Maintenant',
-      urgency: data.urgency || 'Normal',
-      units: Number(data.units) || 1,
-    };
-
-    setAlerts((prev) => {
-      // Double vérification pour éviter les doublons dans l'état
-      const exists = prev.some((alert) => alert.id === newAlert.id);
-      if (exists) {
-        console.log('⚠️ Alerte déjà dans la liste:', newAlert.id);
-        return prev;
-      }
-      
-      console.log('✅ Ajout de la nouvelle alerte:', newAlert.id);
-      return [newAlert, ...prev]; // ajoute en haut de la liste
-    });
-
-    // Nettoie l'ID après 10 secondes pour permettre les duplicatas ultérieurs
-    setTimeout(() => {
-      processedIds.current.delete(uniqueId);
-    }, 10000);
-  }, []);
-
-  // 🎯 Active le listener avec le callback (UNE SEULE FOIS)
   useNotificationListener(handleNotification);
 
-  // Exemple : notification simulée par défaut (optionnel - à retirer en prod)
-  useEffect(() => {
-    setAlerts([
-      {
-        id: 'demo-1',
-        bloodType: 'A+',
-        hospital: 'Hôpital Central',
-        distance: '2.5 km',
-        time: 'Il y a 5 min',
-        urgency: 'Critique',
-        units: 2,
-      },
-    ]);
-  }, []);
-
-  // Fonction pour attribuer les couleurs selon l'urgence
-  const getUrgencyColor = (urgency: string) => {
-    switch (urgency) {
-      case 'Critique':
-        return { bg: '#FED7D7', text: '#C53030' };
-      case 'Urgent':
-        return { bg: '#FEEBC8', text: '#C05621' };
-      case 'Normal':
-        return { bg: '#BEE3F8', text: '#2C5282' };
-      default:
-        return { bg: theme.colors.gray100, text: theme.colors.gray600 };
-    }
-  };
-
-  // Lorsqu'un donneur accepte une demande
-  const handleAccept = useCallback((alert: AlertData) => {
-    Alert.alert(
-      'Confirmer le don',
-      `Confirmez-vous votre disponibilité pour donner du sang ${alert.bloodType} à ${alert.hospital} ?`,
-      [
-        { text: 'Annuler', style: 'cancel' },
-        {
-          text: 'Confirmer',
-          onPress: () => {
-            // Retire l'alerte de la liste
-            setAlerts((prev) => prev.filter((a) => a.id !== alert.id));
-            Alert.alert('Merci !', 'Votre confirmation a été envoyée.', [
-              { text: 'OK' },
-            ]);
+  const handleAccept = useCallback(
+    async (alerte: Alerte) => {
+      Alert.alert(
+        "Confirmer le don",
+        `Êtes-vous disponible pour donner du sang ${alerte.groupe_sanguin} ?`,
+        [
+          { text: "Annuler", style: "cancel" },
+          {
+            text: "Confirmer",
+            onPress: async () => {
+              try {
+                await updateStatut(alerte.id, "accepte");
+                Alert.alert("Merci ❤️", "Votre disponibilité a été confirmée !");
+              } catch {
+                Alert.alert("Erreur", "Impossible de confirmer cette alerte.");
+              }
+            },
           },
-        },
-      ]
-    );
-  }, []);
+        ]
+      );
+    },
+    [updateStatut]
+  );
 
-  // Lorsqu'un donneur refuse une demande
-  const handleDecline = useCallback((alert: AlertData) => {
-    // Retire l'alerte de la liste
-    setAlerts((prev) => prev.filter((a) => a.id !== alert.id));
-    Alert.alert('Refusé', 'Vous avez décliné cette demande de don.');
-  }, []);
+  const handleDecline = useCallback(
+    async (alerte: Alerte) => {
+      try {
+        await updateStatut(alerte.id, "refuse");
+        Alert.alert("Refusé", "Vous avez décliné cette demande de don.");
+      } catch {
+        Alert.alert("Erreur", "Impossible de refuser cette alerte.");
+      }
+    },
+    [updateStatut]
+  );
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={theme.colors.primary} />
-      <ScrollView style={styles.content}>
-        <Text style={styles.sectionTitle}>
-          Alertes reçues ({alerts.length})
-        </Text>
+      <StatusBar barStyle="light-content" backgroundColor="#C53030" />
 
-        {alerts.length === 0 && (
+      {/* 🔴 HEADER */}
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>🩸 Don de Sang - Tableau de Bord</Text>
+        <Text style={styles.headerSubtitle}>
+          Votre groupe sanguin : <Text style={styles.bloodType}>{groupeSanguin}</Text>
+        </Text>
+      </View>
+
+      {/* CONTENU */}
+      <ScrollView style={styles.content}>
+        <Text style={styles.sectionTitle}>Alertes reçues ({alertes.length})</Text>
+
+        {loading && <Text style={styles.loadingText}>Chargement des alertes...</Text>}
+
+        {alertes.length === 0 && !loading && (
           <View style={styles.emptyState}>
             <Text style={styles.emptyText}>🔔 Aucune alerte pour le moment</Text>
           </View>
         )}
 
-        {alerts.map((alert) => {
-          const urgencyColors = getUrgencyColor(alert.urgency);
-          return (
-            <View key={alert.id} style={[styles.alertCard, { borderColor: urgencyColors.bg }]}>
-              <View style={styles.alertHeader}>
-                <View style={[styles.bloodIconContainer, { backgroundColor: urgencyColors.bg }]}>
-                  <Text style={{ fontSize: 24 }}>🩸</Text>
-                </View>
-                <View style={styles.alertInfo}>
-                  <Text style={styles.alertTitle}>
-                    Don de sang {alert.bloodType} requis
-                  </Text>
-                  <Text style={styles.infoText}>🏥 {alert.hospital}</Text>
-                  <Text style={styles.infoText}>📍 {alert.distance} • ⏰ {alert.time}</Text>
-                  <Text style={styles.infoText}>🩸 {alert.units} unités requises</Text>
-                </View>
-              </View>
-
-              <View style={styles.actionButtons}>
-                <TouchableOpacity
-                  style={styles.acceptButton}
-                  onPress={() => handleAccept(alert)}
+        {alertes.map((alerte) => (
+          <View key={alerte.id} style={styles.alertCard}>
+            <View style={styles.alertHeader}>
+              <Text style={styles.alertTitle}>💉 Don de sang {user?.groupe_sanguin}</Text>
+              <Text style={styles.infoText}>
+                🏥 Hôpital : {alerte.hopital || "Non précisé"}
+              </Text>
+              <Text style={styles.infoText}>
+                📅 Statut :{" "}
+                <Text
+                  style={[
+                    styles.statusText,
+                    alerte.statut === "accepte"
+                      ? styles.statusAccepted
+                      : alerte.statut === "refuse"
+                      ? styles.statusRefused
+                      : styles.statusPending,
+                  ]}
                 >
-                  <Text style={{ fontSize: 20, marginRight: 4 }}>✅</Text>
-                  <Text style={styles.acceptButtonText}>Accepter</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={styles.declineButton}
-                  onPress={() => handleDecline(alert)}
-                >
-                  <Text style={{ fontSize: 20, marginRight: 4 }}>❌</Text>
-                  <Text style={styles.declineButtonText}>Refuser</Text>
-                </TouchableOpacity>
-              </View>
+                  {alerte.statut}
+                </Text>
+              </Text>
             </View>
-          );
-        })}
+
+            <View style={styles.actionButtons}>
+              <TouchableOpacity
+                style={styles.acceptButton}
+                onPress={() => handleAccept(alerte)}
+              >
+                <Text style={styles.buttonText}>✅ Accepter</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.declineButton}
+                onPress={() => handleDecline(alerte)}
+              >
+                <Text style={styles.buttonText}>❌ Refuser</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        ))}
       </ScrollView>
     </SafeAreaView>
   );
@@ -190,95 +142,127 @@ const DonorDashboard = ({ navigation }: any) => {
 
 export default DonorDashboard;
 
-// =======================
+// ---------------------------
 // STYLES
-// =======================
+// ---------------------------
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: "#FFF5F5",
   },
+
+  // HEADER
+  header: {
+    backgroundColor: "#C53030",
+    paddingVertical: 20,
+    paddingHorizontal: 16,
+    alignItems: "center",
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  headerTitle: {
+    color: "#fff",
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  headerSubtitle: {
+    color: "#ffeaea",
+    fontSize: 16,
+    marginTop: 4,
+  },
+  bloodType: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+
   content: {
     padding: 16,
   },
   sectionTitle: {
     fontSize: 22,
-    fontWeight: 'bold',
-    color: theme.colors.primary,
-    marginBottom: 12,
+    fontWeight: "bold",
+    color: "#C53030",
+    marginBottom: 16,
   },
+  loadingText: {
+    color: "#666",
+    textAlign: "center",
+    marginVertical: 10,
+  },
+
+  // ÉTAT VIDE
   emptyState: {
-    padding: 32,
-    alignItems: 'center',
-    justifyContent: 'center',
+    padding: 40,
+    alignItems: "center",
+    justifyContent: "center",
   },
   emptyText: {
     fontSize: 16,
-    color: theme.colors.gray600,
-    textAlign: 'center',
+    color: "#999",
+    textAlign: "center",
   },
+
+  // CARD
   alertCard: {
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 12,
+    backgroundColor: "#fff",
+    borderRadius: 15,
+    padding: 16,
     marginBottom: 16,
-    backgroundColor: '#fff',
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
   },
   alertHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  bloodIconContainer: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  alertInfo: {
-    flex: 1,
-    marginLeft: 12,
+    marginBottom: 12,
   },
   alertTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
+    color: "#E53E3E",
     marginBottom: 4,
   },
   infoText: {
     fontSize: 14,
-    color: theme.colors.gray700,
+    color: "#555",
+    marginBottom: 2,
   },
+
+  // STATUTS
+  statusText: { fontWeight: "bold", textTransform: "capitalize" },
+  statusAccepted: { color: "#38A169" },
+  statusRefused: { color: "#E53E3E" },
+  statusPending: { color: "#DD6B20" },
+
+  // BOUTONS
   actionButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 12,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 10,
   },
   acceptButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#48BB78',
-    padding: 10,
-    borderRadius: 8,
     flex: 1,
+    backgroundColor: "#38A169",
+    padding: 12,
+    borderRadius: 10,
+    alignItems: "center",
     marginRight: 8,
-    justifyContent: 'center',
   },
   declineButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#E53E3E',
-    padding: 10,
-    borderRadius: 8,
     flex: 1,
+    backgroundColor: "#E53E3E",
+    padding: 12,
+    borderRadius: 10,
+    alignItems: "center",
     marginLeft: 8,
-    justifyContent: 'center',
   },
-  acceptButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  declineButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+  buttonText: {
+    color: "#fff",
+    fontWeight: "bold",
   },
 });

@@ -26,6 +26,7 @@ const api: AxiosInstance = axios.create({
 api.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     const { accessToken } = useAuthStore.getState();
+    console.log('acces yokrn',accessToken)
     
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
