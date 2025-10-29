@@ -38,7 +38,7 @@ const DonorDashboard = () => {
     async (alerte: Alerte) => {
       Alert.alert(
         "Confirmer le don",
-        `Êtes-vous disponible pour donner du sang ${alerte.groupe_sanguin} ?`,
+        `Êtes-vous disponible pour donner du   sang ${alerte.groupe_sanguin} ?`,
         [
           { text: "Annuler", style: "cancel" },
           {
