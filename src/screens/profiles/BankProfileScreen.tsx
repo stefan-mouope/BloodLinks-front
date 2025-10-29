@@ -44,15 +44,7 @@ const BankProfileScreen = ({ navigation }: ProfileProps) => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={theme.colors.primary} />
-      {/* <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Text style={styles.icon}>⬅️</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Mon profil</Text>
-        <TouchableOpacity onPress={() => setIsEditing(!isEditing)} style={styles.editButton}>
-          <Text style={styles.icon}>{isEditing ? '✅' : '✏️'}</Text>
-        </TouchableOpacity>
-      </View> */}
+
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.profileSection}>
           <View style={styles.avatarContainer}>

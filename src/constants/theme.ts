@@ -44,6 +44,7 @@ export const colors = {
   textSecondary: '#4A5568',
   textTertiary: '#718096',
   textInverse: '#FFFFFF',
+  blackcolor:"#000",
   
   // Border colors
   border: '#E2E8F0',
@@ -63,6 +64,7 @@ export const typography = {
   
   // Font sizes
   fontSize: {
+    x:4,
     xs: 12,
     sm: 14,
     base: 16,
