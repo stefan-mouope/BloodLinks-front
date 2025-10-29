@@ -13,6 +13,7 @@ export type RootStackParamList = {
   doctorprofile:undefined;
   bankprofile:undefined;
   Onboarding: {step: number},
+  Home:undefined
 };
 
 export type FirstPageScreenRouteProp = RouteProp<RootStackParamList, 'FirstPage'>;
