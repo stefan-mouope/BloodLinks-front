@@ -77,7 +77,12 @@ const AppStack = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {!isAuthenticated || !user ? (
+            <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+            <Stack.Screen name="FirstPage" component={FirstPageScreen} />
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="SignUp" component={SignUpScreen} />
+            <Stack.Screen name='Home' component={user?.user_type === 'docteur' ? DoctorTabs : user?.user_type === 'donneur' ? DonorTabs : user?.user_type === 'banque' ? BankTabs : LoginScreen} />
+        {/* {!isAuthenticated || !user ? (
           <>
             <Stack.Screen name="Onboarding" component={OnboardingScreen} />
             <Stack.Screen name="FirstPage" component={FirstPageScreen} />
@@ -93,7 +98,7 @@ const AppStack = () => {
           <Stack.Screen name="DonorTabs" component={DonorTabs} />
         ) : user.user_type === 'banque' ? (
           <Stack.Screen name="BankTabs" component={BankTabs} />
-        ) : null}
+        ) : null} */}
       </Stack.Navigator>
     </NavigationContainer>
   );

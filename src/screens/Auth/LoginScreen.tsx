@@ -62,9 +62,9 @@ const LoginScreen = () => {
           email: formData.email.trim(),
           password: formData.password.trim(),
         },
-        navigation 
+        
       );
-
+      navigation.navigate('Home');  
       console.log('Connexion réussie');
     } catch (err) {
       console.error('Erreur connexion:', err);

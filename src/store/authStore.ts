@@ -23,7 +23,7 @@ const useAuthStore = create<AuthState>()(
       // 🔐 Connexion
       login: async (
         credentials: LoginCredentials,
-        navigation?: NavigationProp<RootStackParamList>
+       
       ) => {
         set({ isLoading: true, error: null });
         try {
@@ -37,24 +37,6 @@ const useAuthStore = create<AuthState>()(
             isLoading: false,
             error: null,
           });
-
-          // ✅ Navigation après connexion selon le rôle
-          if (navigation) {
-            switch (user.user_type) {
-              case 'donneur':
-                navigation.navigate('donor');
-                break;
-              case 'docteur':
-                navigation.navigate('doctor');
-                break;
-              case 'banque':
-                navigation.navigate('banque');
-                break;
-              default:
-                navigation.navigate('Home'); // Fallback
-                break;
-            }
-          }
 
           return user;
         } catch (error) {
@@ -89,23 +71,7 @@ const useAuthStore = create<AuthState>()(
               error: null,
             });
 
-            //  Navigation après inscription selon le rôle
-            if (navigation) {
-              switch (response.user.user_type) {
-                case 'donneur':
-                  navigation.navigate('donor');
-                  break;
-                case 'docteur':
-                  navigation.navigate('login');
-                  break;
-                case 'banque':
-                  navigation.navigate('login');
-                  break;
-                default:
-                  navigation.navigate('Home');
-                  break;
-              }
-            }
+          
 
             return response.user;
           }
