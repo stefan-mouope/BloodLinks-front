@@ -4,6 +4,8 @@ import {
   Text,
   ScrollView,
   Alert,
+  TouchableOpacity,
+  StyleSheet
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Input, RoleSelector, BloodTypeSelector, BankSelector } from '../../components/ui';
@@ -12,7 +14,7 @@ import { SignUpFormData, RoleType, BloodType } from '../../types/auth';
 import { responsiveSize, responsiveFontSize, safeAreaPadding } from '../../utils/responsive';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../../navigation/AppNavigator';
+import { RootStackParamList } from '../FirstPage/types';
 import useAuthStore from '../../store/authStore';
 
 type SignUpScreenNavigationProp = StackNavigationProp<RootStackParamList, 'SignUp'>;
@@ -136,7 +138,7 @@ const SignUpScreen: React.FC = () => {
             [
               {
                 text: 'OK',
-                onPress: () => navigation.navigate('Login'),
+                onPress: () => navigation.navigate('Home'),
               },
             ]
           );
@@ -306,8 +308,31 @@ const SignUpScreen: React.FC = () => {
           size="lg"
         />
       </View>
+            <View style={styles.signupContainer}>
+              <Text style={styles.signupText}>Vous avez deja un compte ? </Text>
+              <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+                <Text style={styles.signupLink}>Se connecter </Text>
+              </TouchableOpacity>
+            </View>
     </SafeAreaView>
   );
 };
+
+const styles= StyleSheet.create({
+  signupContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  signupText: {
+    color: theme.colors.textSecondary,
+    fontSize: theme.typography.fontSize.base,
+  },
+  signupLink: {
+    color: theme.colors.primary,
+    fontSize: theme.typography.fontSize.base,
+    fontWeight: theme.typography.fontWeight.semiBold,
+  },
+})
 
 export default SignUpScreen;

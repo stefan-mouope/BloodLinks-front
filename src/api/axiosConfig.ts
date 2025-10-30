@@ -6,7 +6,7 @@ import useAuthStore from '../store/authStore';
 const getBaseURL = () => {
   if (__DEV__) {
     return Platform.OS === 'android' 
-      ? 'http://10.0.2.2:8000/api/' // Android Emulator
+      ? 'http://172.18.0.1:8000/api/' // Android Emulator
       : 'http://localhost:8000/api/'; // iOS Simulator ou appareil physique
   }
   return 'https://votre-api-production.com/api/';
