@@ -77,6 +77,7 @@ const AppStack = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="CreateRequest" component={CreateRequestScreen}/>
             <Stack.Screen name="Onboarding" component={OnboardingScreen} />
             <Stack.Screen name="FirstPage" component={FirstPageScreen} />
             <Stack.Screen name="Login" component={LoginScreen} />

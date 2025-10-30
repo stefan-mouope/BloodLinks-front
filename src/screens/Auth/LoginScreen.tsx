@@ -71,6 +71,10 @@ const LoginScreen = () => {
       Alert.alert('Erreur', authError || 'Email ou mot de passe incorrect');
     }
   };
+ const handleBackTFirsPage = () => {
+    navigation.navigate('FirstPage')
+  };
+
 
   return (
     <SafeAreaView
@@ -80,6 +84,9 @@ const LoginScreen = () => {
         paddingHorizontal: safeAreaPadding(theme.spacing.lg),
       }}
     >
+      <TouchableOpacity style={styles.backButton} onPress={handleBackTFirsPage}>
+        <Text style={styles.backButtonText}>←</Text>
+      </TouchableOpacity>
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{
@@ -174,6 +181,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: responsiveSize(theme.spacing.md),
     paddingHorizontal: responsiveSize(theme.spacing.md),
+  },
+    backButton: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    padding: 10,
+  },
+  backButtonText: {
+    fontSize: 24,
+    color: theme.colors.primary,
   },
 });
 
