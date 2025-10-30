@@ -140,60 +140,7 @@ const BloodBankDashboard = () => {
           );
         })}
       </ScrollView>
-      {/* Bottom Navigation */}
-      <View style={styles.bottomNav}>
-        <TouchableOpacity
-          style={styles.navItem}
-          onPress={() => {
-            setActiveTab('Demandes');
-            navigation.navigate('BloodBankDashboard');
-          }}
-        >
-          <Text style={{ fontSize: 24 }}>🔔</Text>
-          <Text
-            style={[
-              styles.navText,
-              activeTab === 'Demandes' && { color: theme.colors.primary },
-            ]}
-          >
-            Demandes
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.navItem}
-          onPress={() => {
-            setActiveTab('Historique');
-            navigation.navigate('historybank');
-          }}
-        >
-          <Text style={{ fontSize: 24 }}>⏱️</Text>
-          <Text
-            style={[
-              styles.navText,
-              activeTab === 'Historique' && { color: theme.colors.primary },
-            ]}
-          >
-            Historique
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.navItem}
-          onPress={() => {
-            setActiveTab('Profil');
-            navigation.navigate('bankprofile');
-          }}
-        >
-          <Text style={{ fontSize: 24 }}>👤</Text>
-          <Text
-            style={[
-              styles.navText,
-              activeTab === 'Profil' && { color: theme.colors.primary },
-            ]}
-          >
-            Profil
-          </Text>
-        </TouchableOpacity>
-      </View>
+
     </SafeAreaView>
   );
 };
@@ -302,24 +249,7 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.fontSize.sm,
     fontWeight: theme.typography.fontWeight.semiBold,
   },
-  bottomNav: {
-    flexDirection: 'row',
-    backgroundColor: theme.colors.white,
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.border,
-    paddingVertical: theme.spacing.md,
-    paddingHorizontal: theme.spacing.md,
-    justifyContent: 'space-around',
-  },
-  navItem: {
-    alignItems: 'center',
-    gap: 4,
-  },
-  navText: {
-    fontSize: theme.typography.fontSize.xs,
-    color: theme.colors.textSecondary,
-    marginTop: 2,
-  },
+
 });
 
 export default BloodBankDashboard;

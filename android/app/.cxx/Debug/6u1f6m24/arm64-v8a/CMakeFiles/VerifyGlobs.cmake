@@ -37,6 +37,37 @@ if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
   file(TOUCH_NOCREATE "/home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLinks-front/android/app/.cxx/Debug/6u1f6m24/arm64-v8a/CMakeFiles/cmake.verify_globs")
 endif()
 
+# LIB_CUSTOM_SRCS at /home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLinks-front/node_modules/@react-native-picker/picker/android/src/main/jni/CMakeLists.txt:20 (file)
+file(GLOB NEW_GLOB LIST_DIRECTORIES true "/home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLinks-front/node_modules/@react-native-picker/picker/android/src/main/jni/*.cpp")
+set(OLD_GLOB
+  "/home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLinks-front/node_modules/@react-native-picker/picker/android/src/main/jni/RNCAndroidDialogPickerMeasurementsManager.cpp"
+  "/home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLinks-front/node_modules/@react-native-picker/picker/android/src/main/jni/RNCAndroidDialogPickerShadowNode.cpp"
+  "/home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLinks-front/node_modules/@react-native-picker/picker/android/src/main/jni/RNCAndroidDialogPickerState.cpp"
+  "/home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLinks-front/node_modules/@react-native-picker/picker/android/src/main/jni/RNCAndroidDropdownPickerMeasurementsManager.cpp"
+  "/home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLinks-front/node_modules/@react-native-picker/picker/android/src/main/jni/RNCAndroidDropdownPickerShadowNode.cpp"
+  "/home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLinks-front/node_modules/@react-native-picker/picker/android/src/main/jni/RNCAndroidDropdownPickerState.cpp"
+  "/home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLinks-front/node_modules/@react-native-picker/picker/android/src/main/jni/rnpicker.cpp"
+  )
+if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
+  message("-- GLOB mismatch!")
+  file(TOUCH_NOCREATE "/home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLinks-front/android/app/.cxx/Debug/6u1f6m24/arm64-v8a/CMakeFiles/cmake.verify_globs")
+endif()
+
+# LIB_CODEGEN_SRCS at /home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLinks-front/node_modules/@react-native-picker/picker/android/src/main/jni/CMakeLists.txt:21 (file)
+file(GLOB NEW_GLOB LIST_DIRECTORIES true "/home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLinks-front/node_modules/@react-native-picker/picker/android/src/main/jni/../../../build/generated/source/codegen/jni/react/renderer/components/rnpicker/*.cpp")
+set(OLD_GLOB
+  "/home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLinks-front/node_modules/@react-native-picker/picker/android/src/main/jni/../../../build/generated/source/codegen/jni/react/renderer/components/rnpicker/ComponentDescriptors.cpp"
+  "/home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLinks-front/node_modules/@react-native-picker/picker/android/src/main/jni/../../../build/generated/source/codegen/jni/react/renderer/components/rnpicker/EventEmitters.cpp"
+  "/home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLinks-front/node_modules/@react-native-picker/picker/android/src/main/jni/../../../build/generated/source/codegen/jni/react/renderer/components/rnpicker/Props.cpp"
+  "/home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLinks-front/node_modules/@react-native-picker/picker/android/src/main/jni/../../../build/generated/source/codegen/jni/react/renderer/components/rnpicker/ShadowNodes.cpp"
+  "/home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLinks-front/node_modules/@react-native-picker/picker/android/src/main/jni/../../../build/generated/source/codegen/jni/react/renderer/components/rnpicker/States.cpp"
+  "/home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLinks-front/node_modules/@react-native-picker/picker/android/src/main/jni/../../../build/generated/source/codegen/jni/react/renderer/components/rnpicker/rnpickerJSI-generated.cpp"
+  )
+if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
+  message("-- GLOB mismatch!")
+  file(TOUCH_NOCREATE "/home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLinks-front/android/app/.cxx/Debug/6u1f6m24/arm64-v8a/CMakeFiles/cmake.verify_globs")
+endif()
+
 # react_codegen_SRCS at /home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLinks-front/node_modules/react-native-gesture-handler/android/build/generated/source/codegen/jni/CMakeLists.txt:9 (file)
 file(GLOB NEW_GLOB LIST_DIRECTORIES true "/home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLinks-front/node_modules/react-native-gesture-handler/android/build/generated/source/codegen/jni/*.cpp")
 set(OLD_GLOB
