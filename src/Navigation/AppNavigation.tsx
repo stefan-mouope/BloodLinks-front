@@ -6,13 +6,12 @@ import { Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import useAuthStore from '../store/authStore';
 
+// Screens
 import DoctorPage from '../screens/DoctorPage/DoctorPage';
 import DoctorProfileScreen from '../screens/profiles/DoctorProfileScreen';
 import CreateRequestScreen from '../screens/DoctorPage/CreateRequestScreen';
-
 import DonorDashboard from '../screens/DonneurPage/DonorDashboard';
 import DonorProfileScreen from '../screens/profiles/DonorProfileScreen';
-
 import BloodBankDashboard from '../screens/BloodBank/BloodBankDashboard';
 import BankProfileScreen from '../screens/profiles/BankProfileScreen';
 
@@ -20,6 +19,7 @@ import OnboardingScreen from '../screens/onboarding/Onboarding';
 import FirstPageScreen from '../screens/FirstPage/FirstPageScreen';
 import LoginScreen from '../screens/Auth/LoginScreen';
 import SignUpScreen from '../screens/Auth/SignUpScreen';
+import SentAlerts from '../screens/BloodBank/SendAlerts';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -60,7 +60,12 @@ const BankTabs = () => (
     <Tab.Screen
       name="BankHome"
       component={BloodBankDashboard}
-      options={{ tabBarLabel: 'Accueil', tabBarIcon: () => <Text style={{ fontSize: 24 }}>🏠</Text> }}
+      options={{ tabBarLabel: 'Dashboard', tabBarIcon: () => <Text style={{ fontSize: 24 }}>🏠</Text> }}
+    />
+    <Tab.Screen
+      name="SentAlerts"
+      component={SentAlerts}
+      options={{ tabBarLabel: 'Alertes envoyées', tabBarIcon: () => <Text style={{ fontSize: 24 }}>⚠️</Text> }}
     />
     <Tab.Screen
       name="BankProfile"
@@ -77,13 +82,7 @@ const AppStack = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="CreateRequest" component={CreateRequestScreen}/>
-            <Stack.Screen name="Onboarding" component={OnboardingScreen} />
-            <Stack.Screen name="FirstPage" component={FirstPageScreen} />
-            <Stack.Screen name="Login" component={LoginScreen} />
-            <Stack.Screen name="SignUp" component={SignUpScreen} />
-            <Stack.Screen name='Home' component={user?.user_type === 'docteur' ? DoctorTabs : user?.user_type === 'donneur' ? DonorTabs : user?.user_type === 'banque' ? BankTabs : LoginScreen} />
-        {/* {!isAuthenticated || !user ? (
+        {!isAuthenticated || !user ? (
           <>
             <Stack.Screen name="Onboarding" component={OnboardingScreen} />
             <Stack.Screen name="FirstPage" component={FirstPageScreen} />
@@ -99,7 +98,7 @@ const AppStack = () => {
           <Stack.Screen name="DonorTabs" component={DonorTabs} />
         ) : user.user_type === 'banque' ? (
           <Stack.Screen name="BankTabs" component={BankTabs} />
-        ) : null} */}
+        ) : null}
       </Stack.Navigator>
     </NavigationContainer>
   );

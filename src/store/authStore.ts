@@ -32,7 +32,7 @@ const useAuthStore = create<AuthState>()(
           set({
             user,
             accessToken: access,
-            refreshToken: refresh,
+            refreshToken: refresh ,
             isAuthenticated: true,
             isLoading: false,
             error: null,
@@ -52,45 +52,33 @@ const useAuthStore = create<AuthState>()(
       },
 
       // 🧾 Inscription
-      register: async (
-        userData: RegisterData,
-        navigation?: NavigationProp<RootStackParamList>
-      ) => {
-        set({ isLoading: true, error: null });
-        try {
-          const response = await authService.register(userData);
+      register: async (userData: RegisterData) => {
+  set({ isLoading: true, error: null });
+  try {
+    const response = await authService.register(userData);
 
-          // Si le backend retourne aussi les tokens → connexion automatique
-          if (response.access && response.refresh) {
-            set({
-              user: response.user,
-              accessToken: response.access,
-              refreshToken: response.refresh,
-              isAuthenticated: true,
-              isLoading: false,
-              error: null,
-            });
+    // Si succès
+    set({
+      isLoading: false,
+      error: null,
+      user: response.user ?? null,
+      accessToken: response.access ?? null,
+      refreshToken: response.refresh ?? null,
+      isAuthenticated: !!(response.access && response.refresh),
+    });
 
-          
-
-            return response.user;
-          }
-
-          // Si le backend ne renvoie pas de tokens → succès sans connexion
-          set({ isLoading: false, error: null });
-          return response.user;
-        } catch (error) {
-          const errorMessage =
-            error instanceof Error ? error.message : "Échec de l'inscription";
-          set({
-            error: errorMessage,
-            isLoading: false,
-            isAuthenticated: false,
-          });
-          throw error;
-        }
-      },
-
+    return true; // ✅ renvoie toujours un booléen en cas de succès
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Échec de l'inscription";
+    set({
+      error: errorMessage,
+      isLoading: false,
+      isAuthenticated: false,
+    });
+    return false; // ✅ renvoie false en cas d’échec
+  }
+},
       // 🚪 Déconnexion
       logout: async () => {
         set({ isLoading: true });

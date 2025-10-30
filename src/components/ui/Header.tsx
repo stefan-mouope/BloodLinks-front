@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { StackHeaderProps } from '@react-navigation/stack';
 import { theme } from '../../constants/theme';
 
-interface HeaderProps extends StackHeaderProps {
+// On crée un type simple pour nos props
+interface HeaderProps {
+  navigation: any;
+  route: { name: string };
   notificationCount?: number;
   centerSubtitle?: string;
 }
@@ -47,13 +49,11 @@ const Header: React.FC<HeaderProps> = ({
     }
   };
 
-  // Cas spécial : DoctorProfile et DonorProfile
   const isProfilePage =
     route.name === 'doctorprofile' || route.name === 'donorprofile';
 
   return (
     <View style={styles.container}>
-      {/* === Cas spécial : Pages profil (Doctor / Donor) === */}
       {isProfilePage ? (
         <View style={styles.header}>
           <TouchableOpacity
@@ -74,7 +74,6 @@ const Header: React.FC<HeaderProps> = ({
         </View>
       ) : (
         <>
-          {/* === Bouton retour pour les autres pages === */}
           {showBackButton && (
             <View style={styles.topLeft}>
               <TouchableOpacity
@@ -87,14 +86,12 @@ const Header: React.FC<HeaderProps> = ({
             </View>
           )}
 
-          {/* === Titre centré pour Login / SignUp === */}
           {showCenterTitle && (
             <View style={styles.bottomCenter}>
               <Text style={styles.centerTitle}>BloodLink</Text>
             </View>
           )}
 
-          {/* === Icônes à droite pour Donor / BloodBank / Doctor === */}
           {showRightIcons && (
             <View style={styles.topRight}>
               <TouchableOpacity style={styles.iconButton}>
@@ -111,7 +108,6 @@ const Header: React.FC<HeaderProps> = ({
             </View>
           )}
 
-          {/* === Sous-titre pour DonorDashboard === */}
           {route.name === 'DonorDashboard' && centerSubtitle && (
             <View style={styles.bottomSubtitle}>
               <Text style={styles.subtitle}>{centerSubtitle}</Text>
@@ -129,8 +125,19 @@ const styles = StyleSheet.create({
     height: 120,
     position: 'relative',
     paddingTop: 30,
+    paddingVertical: 20,
+    paddingHorizontal: 16,
+    alignItems: "center",
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 4,
+    elevation: 5,
   },
   header: {
+    
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -153,14 +160,14 @@ const styles = StyleSheet.create({
   },
   topLeft: {
     position: 'absolute',
-    top: 25,
+    top: 40,
     left: 12,
     flexDirection: 'row',
     alignItems: 'center',
   },
   topRight: {
     position: 'absolute',
-    top: 25,
+    top: 40,
     right: 12,
     flexDirection: 'row',
     gap: theme.spacing.md,

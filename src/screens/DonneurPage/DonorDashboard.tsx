@@ -45,7 +45,7 @@ const DonorDashboard = () => {
             text: "Confirmer",
             onPress: async () => {
               try {
-                await updateStatut(alerte.id, "accepte");
+                await updateStatut(alerte.id, "en_attente");
                 Alert.alert("Merci ❤️", "Votre disponibilité a été confirmée !");
               } catch {
                 Alert.alert("Erreur", "Impossible de confirmer cette alerte.");
