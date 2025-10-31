@@ -66,7 +66,7 @@ const BankTabs = () => (
     <Tab.Screen
       name="alert"
       component={SentAlerts}
-      options={{ tabBarLabel: 'alert', tabBarIcon: () => <Text style={{ fontSize: 24 }}>🏠</Text> }}
+      options={{ tabBarLabel: 'alert', tabBarIcon: () => <Text style={{ fontSize: 24 }}>🔔</Text> }}
     />
     <Tab.Screen
       name="BankProfile"
