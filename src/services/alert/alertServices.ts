@@ -36,6 +36,8 @@ export class AlertService {
       const response = await api.get<Alerte[]>("/alertes/par-groupe/", {
         params: { groupe_sanguin: groupeSanguin },
       });
+      console.log(response.data)
+      
       return response.data;
     } catch (error: any) {
       console.error("Erreur récupération alertes :", error?.response?.data || error.message);
