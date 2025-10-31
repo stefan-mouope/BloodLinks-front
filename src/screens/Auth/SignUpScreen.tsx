@@ -60,7 +60,7 @@ const SignUpScreen: React.FC = () => {
     }
   };
 
-  const handleBankSelect = (bankId: number) => {
+  const handleBankSelect = (bankId: number | null) => {
     setFormData(prev => ({ ...prev, BanqueDeSang: bankId })); // Changé de banque_de_sang_id à BanqueDeSang
     if (errors.BanqueDeSang) {
       setErrors(prev => ({ ...prev, BanqueDeSang: undefined }));

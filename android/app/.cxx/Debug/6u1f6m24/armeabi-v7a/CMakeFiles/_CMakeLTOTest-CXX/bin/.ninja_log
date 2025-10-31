@@ -1,4 +1,10 @@
 # ninja log v5
+<<<<<<< HEAD
 0	9	1761820617064255723	CMakeFiles/foo.dir/foo.cpp.o	13b3534d4f7147a5
 0	9	1761820617064255723	CMakeFiles/boo.dir/main.cpp.o	90efad46702ea4b2
 9	28	1761820617083251101	libfoo.a	9b867d528b819889
+=======
+9	180	1761831382734813406	CMakeFiles/boo.dir/main.cpp.o	90efad46702ea4b2
+0	181	1761831382734813406	CMakeFiles/foo.dir/foo.cpp.o	13b3534d4f7147a5
+181	213	1761831382772806713	libfoo.a	9b867d528b819889
+>>>>>>> origin/stefan

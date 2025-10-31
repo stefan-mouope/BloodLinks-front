@@ -77,12 +77,12 @@ const AppStack = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Onboarding" component={OnboardingScreen} />
-        <Stack.Screen name="CreateRequest" component={CreateRequestScreen} />
-        <Stack.Screen name="FirstPage" component={FirstPageScreen} />
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="SignUp" component={SignUpScreen} />
-          <Stack.Screen name='Home' component={user?.user_type === 'docteur' ? DoctorTabs : user?.user_type === 'donneur' ? DonorTabs : user?.user_type === 'banque' ? BankTabs : LoginScreen} />
+            <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+            <Stack.Screen name="CreateRequest" component={CreateRequestScreen}/>
+            <Stack.Screen name="FirstPage" component={FirstPageScreen} />
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="SignUp" component={SignUpScreen} />
+            <Stack.Screen name='Home' component={user?.user_type === 'docteur' ? DoctorTabs : user?.user_type === 'donneur' ? DonorTabs : user?.user_type === 'banque' ? BankTabs : LoginScreen} />
         {/* {!isAuthenticated || !user ? (
           <>
             <Stack.Screen name="Onboarding" component={OnboardingScreen} />
