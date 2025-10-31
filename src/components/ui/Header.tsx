@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { StackHeaderProps } from '@react-navigation/stack';
+import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
+import { getStatusBarHeight } from 'react-native-status-bar-height';
 import { theme } from '../../constants/theme';
 
-interface HeaderProps extends StackHeaderProps {
+// Type des props
+interface HeaderProps {
+  navigation: any;
+  route: { name: string };
   notificationCount?: number;
   centerSubtitle?: string;
 }
@@ -47,13 +50,11 @@ const Header: React.FC<HeaderProps> = ({
     }
   };
 
-  // Cas spécial : DoctorProfile et DonorProfile
   const isProfilePage =
     route.name === 'doctorprofile' || route.name === 'donorprofile';
 
   return (
     <View style={styles.container}>
-      {/* === Cas spécial : Pages profil (Doctor / Donor) === */}
       {isProfilePage ? (
         <View style={styles.header}>
           <TouchableOpacity
@@ -74,7 +75,6 @@ const Header: React.FC<HeaderProps> = ({
         </View>
       ) : (
         <>
-          {/* === Bouton retour pour les autres pages === */}
           {showBackButton && (
             <View style={styles.topLeft}>
               <TouchableOpacity
@@ -87,14 +87,12 @@ const Header: React.FC<HeaderProps> = ({
             </View>
           )}
 
-          {/* === Titre centré pour Login / SignUp === */}
           {showCenterTitle && (
             <View style={styles.bottomCenter}>
               <Text style={styles.centerTitle}>BloodLink</Text>
             </View>
           )}
 
-          {/* === Icônes à droite pour Donor / BloodBank / Doctor === */}
           {showRightIcons && (
             <View style={styles.topRight}>
               <TouchableOpacity style={styles.iconButton}>
@@ -111,7 +109,6 @@ const Header: React.FC<HeaderProps> = ({
             </View>
           )}
 
-          {/* === Sous-titre pour DonorDashboard === */}
           {route.name === 'DonorDashboard' && centerSubtitle && (
             <View style={styles.bottomSubtitle}>
               <Text style={styles.subtitle}>{centerSubtitle}</Text>
@@ -123,18 +120,29 @@ const Header: React.FC<HeaderProps> = ({
   );
 };
 
+// Hauteur de la barre de statut pour Android
+const STATUS_BAR_HEIGHT = Platform.OS === 'android' ? getStatusBarHeight() : 0;
+
 const styles = StyleSheet.create({
   container: {
     backgroundColor: theme.colors.primary,
-    height: 120,
-    position: 'relative',
-    paddingTop: 30,
+    height: 100 + STATUS_BAR_HEIGHT,
+    paddingTop: STATUS_BAR_HEIGHT + 10,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 4,
+    elevation: 5,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: theme.spacing.md,
+    width: '100%',
   },
   backButton: {
     padding: theme.spacing.xs,
@@ -153,14 +161,14 @@ const styles = StyleSheet.create({
   },
   topLeft: {
     position: 'absolute',
-    top: 25,
+    top: STATUS_BAR_HEIGHT + 10,
     left: 12,
     flexDirection: 'row',
     alignItems: 'center',
   },
   topRight: {
     position: 'absolute',
-    top: 25,
+    top: STATUS_BAR_HEIGHT + 10,
     right: 12,
     flexDirection: 'row',
     gap: theme.spacing.md,
@@ -181,14 +189,14 @@ const styles = StyleSheet.create({
   },
   bottomCenter: {
     position: 'absolute',
-    bottom: 30,
+    bottom: 25,
     left: 0,
     right: 0,
     alignItems: 'center',
   },
   bottomSubtitle: {
     position: 'absolute',
-    bottom: 10,
+    bottom: 8,
     left: 0,
     right: 0,
     alignItems: 'center',
@@ -211,7 +219,7 @@ const styles = StyleSheet.create({
     top: -4,
     right: -4,
     backgroundColor: '#FBBF24',
-    borderRadius: theme.borderRadius.full,
+    borderRadius: 10,
     width: 18,
     height: 18,
     alignItems: 'center',

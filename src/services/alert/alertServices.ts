@@ -36,12 +36,35 @@ export class AlertService {
       const response = await api.get<Alerte[]>("/alertes/par-groupe/", {
         params: { groupe_sanguin: groupeSanguin },
       });
+      console.log(response.data)
+      
       return response.data;
     } catch (error: any) {
       console.error("Erreur récupération alertes :", error?.response?.data || error.message);
       throw error;
     }
   }
+
+
+
+  /**
+     * 🔹 Récupère les alertes envoyées pour une banque spécifique
+     */
+    static async getAlertesEnvoyeesParBanque(banqueId: number): Promise<Alerte[]> {
+      try {
+        const response = await api.get<Alerte[]>("/alertes/banque/", {
+          params: { banque_id: banqueId },
+        });
+        return response.data;
+      } catch (error: any) {
+        console.error(
+          "Erreur récupération alertes envoyées par banque :",
+          error?.response?.data || error.message
+        );
+        throw error;
+      }
+    }
+
 
   /**
    * 🔹 Récupère une alerte spécifique

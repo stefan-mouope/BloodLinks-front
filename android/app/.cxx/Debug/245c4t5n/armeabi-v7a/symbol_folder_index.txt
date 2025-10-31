@@ -1,1 +1,0 @@
-/home/lavue/Dev/js/React Native/nouveau dossier/BloodLinks-front/android/app/build/intermediates/cxx/Debug/245c4t5n/obj/armeabi-v7a

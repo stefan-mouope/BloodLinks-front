@@ -14,12 +14,13 @@ import useNotificationListener from "../../firabase/useNotificationListener";
 import { useAlertes } from "../../hooks/useAlertes"; 
 import { Alerte } from "../../types/data";
 import useAuthStore from "../../store/authStore";
-
+// 
 const DonorDashboard = () => {
   const {user} = useAuthStore()
   const groupeSanguin = user?.groupe_sanguin || 'O+'; // à remplacer par celui du donneur connecté
   const { alertes, loading, refresh, updateStatut } = useAlertes(groupeSanguin);
   const processedIds = useRef(new Set<string>());
+  const [isValide, setIsValide]= useState(false)
 
   const handleNotification = useCallback(
     async (data: any) => {
@@ -38,14 +39,15 @@ const DonorDashboard = () => {
     async (alerte: Alerte) => {
       Alert.alert(
         "Confirmer le don",
-        `Êtes-vous disponible pour donner du   sang ${alerte.groupe_sanguin} ?`,
+        `Êtes-vous disponible pour donner du   sang ${alerte.requete.groupe_sanguin} ?`,
         [
           { text: "Annuler", style: "cancel" },
           {
             text: "Confirmer",
             onPress: async () => {
               try {
-                await updateStatut(alerte.id, "accepte");
+                await updateStatut(alerte.id, "en_attente");
+                setIsValide(true)
                 Alert.alert("Merci ❤️", "Votre disponibilité a été confirmée !");
               } catch {
                 Alert.alert("Erreur", "Impossible de confirmer cette alerte.");
@@ -99,7 +101,7 @@ const DonorDashboard = () => {
             <View style={styles.alertHeader}>
               <Text style={styles.alertTitle}>💉 Don de sang {user?.groupe_sanguin}</Text>
               <Text style={styles.infoText}>
-                🏥 Hôpital : {alerte.hopital || "Non précisé"}
+                🏥 Hôpital : {alerte.requete.docteur.banque.nom || "Non précisé"}
               </Text>
               <Text style={styles.infoText}>
                 📅 Statut :{" "}
@@ -119,12 +121,19 @@ const DonorDashboard = () => {
             </View>
 
             <View style={styles.actionButtons}>
-              <TouchableOpacity
-                style={styles.acceptButton}
-                onPress={() => handleAccept(alerte)}
-              >
-                <Text style={styles.buttonText}>✅ Accepter</Text>
+
+                {
+                  isValide? (
+                <TouchableOpacity
+                    style={styles.acceptButton}
+                    onPress={() => handleAccept(alerte)}
+                  >
+                    <Text style={styles.buttonText}>✅ Accepter</Text>
               </TouchableOpacity>
+                  ):<Text style={styles.buttonText}>✅ Accepter</Text>
+
+                }
+
 
               <TouchableOpacity
                 style={styles.declineButton}
