@@ -18,6 +18,8 @@ interface ProfileProps {
   navigation: any;
 }
 
+import useAuthStore from '../../store/authStore';
+
 const BankProfileScreen = ({ navigation }: ProfileProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -31,14 +33,23 @@ const BankProfileScreen = ({ navigation }: ProfileProps) => {
     capacity: '500 unités',
   };
 
+  const { user,logout } = useAuthStore();
+
   const handleLogout = () => {
     setShowLogoutModal(true);
   };
 
   const confirmLogout = () => {
-    setShowLogoutModal(false);
+    try{
+      logout();
+      setShowLogoutModal(false);
     Alert.alert('Déconnexion', 'Vous avez été déconnecté avec succès');
     navigation.navigate('Login');
+    }catch (error) {
+      Alert.alert('Erreur', "Une erreur est survenue lors de la déconnexion.");
+      console.error('Erreur lors de la déconnexion :', error);
+    }
+   
   };
 
   return (

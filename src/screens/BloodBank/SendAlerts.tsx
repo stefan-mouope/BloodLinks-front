@@ -74,7 +74,7 @@ const SentAlerts = () => {
       if (!alerte) return;
 
       await AlertService.updateAlerte(alerteId, { statut: 'acceptee' });
-      await requeteService.updateStatus(alerte.requete.id, 'valide');
+      // await requeteService.updateStatus(alerte.requete.id, 'valide');
 
       setAlertes(prev => prev.filter(a => a.id !== alerteId));
       Alert.alert('Succès', 'Alerte et requête validées ✅');
@@ -90,7 +90,7 @@ const SentAlerts = () => {
       if (!alerte) return;
 
       await AlertService.updateAlerte(alerteId, { statut: 'refusee' });
-      await requeteService.updateStatus(alerte.requete.id, 'refusee');
+      // await requeteService.updateStatus(alerte.requete.id, 'refusee');
 
       setAlertes(prev => prev.filter(a => a.id !== alerteId));
       Alert.alert('Succès', 'Alerte et requête refusées ❌');

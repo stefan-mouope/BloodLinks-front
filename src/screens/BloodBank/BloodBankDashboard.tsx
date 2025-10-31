@@ -1,5 +1,4 @@
-// screens/BloodBankDashboard.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -16,7 +15,9 @@ import Header from '../../components/ui/Header';
 import { AlertService } from '../../services/alert/alertServices';
 import useAuthStore from '../../store/authStore';
 import requeteService from '../../services/request/requestService';
-import { Requete } from '../../types/data';
+import { Requete, Alerte } from '../../types/data';
+import useNotificationListener from "../../firabase/useNotificationListener"; // ✅ correction d’orthographe du dossier
+import { useAlertes } from "../../hooks/useAlertes"; 
 
 interface RequeteWithAlert extends Requete {
   alertEnvoyee?: boolean; // état local pour savoir si l'alerte a été envoyée
@@ -28,7 +29,37 @@ const BloodBankDashboard = () => {
   const [notificationCount, setNotificationCount] = useState(3); // exemple
   const { user } = useAuthStore();
 
-  // Couleurs selon l'urgence
+  // === Référence pour éviter les doublons de notifications ===
+  const processedIds = useRef<Set<string>>(new Set());
+
+  // === Récupérer toutes les requêtes de la banque ===
+  const fetchRequetes = useCallback(async () => {
+    if (!user?.id) return;
+    try {
+      const data: RequeteWithAlert[] = await requeteService.getByBanque(user.id);
+      setRequests(data);
+    } catch (error) {
+      console.error('Erreur récupération requêtes :', error);
+      Alert.alert('Erreur', "Impossible de récupérer les requêtes");
+    }
+  }, [user]);
+
+  useEffect(() => {
+    fetchRequetes();
+  }, [fetchRequetes]);
+
+  // === Gestion des notifications push ===
+  const handleNotification = useCallback(async (data: any) => {
+    const uniqueId = data.id || `${data.bloodType}-${Date.now()}`;
+    if (processedIds.current.has(uniqueId)) return;
+    processedIds.current.add(uniqueId);
+    await fetchRequetes();
+    setTimeout(() => processedIds.current.delete(uniqueId), 5000);
+  }, [fetchRequetes]);
+
+  useNotificationListener(handleNotification);
+
+  // === Couleur selon le statut ===
   const getUrgencyColor = (statut: string) => {
     switch (statut) {
       case 'critique':
@@ -38,38 +69,22 @@ const BloodBankDashboard = () => {
       case 'normal':
         return { bg: '#BEE3F8', text: '#2C5282' };
       default:
-        return { bg: '#FED7D7', text: '#C53030' };
+        return { bg: '#E2E8F0', text: '#4A5568' };
     }
   };
 
-  // 🔹 Charger toutes les requêtes de la banque
-  const fetchRequetes = async () => {
-    if (!user?.id) return;
-    try {
-      const data: RequeteWithAlert[] = await requeteService.getByBanque(user.id);
-      setRequests(data);
-    } catch (error) {
-      console.error('Erreur récupération requêtes :', error);
-      Alert.alert('Erreur', "Impossible de récupérer les requêtes");
-    }
-  };
-
-  useEffect(() => {
-    fetchRequetes();
-  }, []);
-
-  // 🔹 Envoyer une alerte
+  // === Créer une alerte ===
   const handleCreateAlert = async (requestId: number) => {
     try {
       const request = requests.find((r) => r.id === requestId);
       if (!request) return;
+
       await AlertService.createAlerte({
         requete: request.id,
         groupe_sanguin: request.groupe_sanguin,
       });
-      setRequests((prev) => prev.filter((r) => r.id !== requestId));
 
-      // Mettre à jour l'état pour afficher "Alerte envoyée"
+      // Mettre à jour l’état
       setRequests((prev) =>
         prev.map((r) =>
           r.id === requestId ? { ...r, alertEnvoyee: true } : r
@@ -78,21 +93,59 @@ const BloodBankDashboard = () => {
 
       Alert.alert('Succès', 'Alerte créée avec succès');
     } catch (error) {
-      console.error(error);
-      Alert.alert('Erreur', 'Échec de la création de l\'alerte');
+      console.error('Erreur création alerte :', error);
+      Alert.alert('Erreur', "Échec de la création de l'alerte");
     }
   };
 
-  // 🔹 Annuler la requête et supprimer la carte
+  // === Annuler une requête (localement) ===
   const handleCancelRequest = (requestId: number) => {
     setRequests((prev) => prev.filter((r) => r.id !== requestId));
   };
+
+  // === Gestion des alertes reçues (banque qui accepte/refuse) ===
+  const { updateStatut } = useAlertes();
+
+  const handleAccept = useCallback(
+    async (alerte: Alerte) => {
+      Alert.alert(
+        "Confirmer le don",
+        `Êtes-vous disponible pour donner du sang ${alerte.groupe_sanguin} ?`,
+        [
+          { text: "Annuler", style: "cancel" },
+          {
+            text: "Confirmer",
+            onPress: async () => {
+              try {
+                await updateStatut(alerte.id, "en_attente");
+                Alert.alert("Merci ❤️", "Votre disponibilité a été confirmée !");
+              } catch {
+                Alert.alert("Erreur", "Impossible de confirmer cette alerte.");
+              }
+            },
+          },
+        ]
+      );
+    },
+    [updateStatut]
+  );
+
+  const handleDecline = useCallback(
+    async (alerte: Alerte) => {
+      try {
+        await updateStatut(alerte.id, "refuse");
+        Alert.alert("Refusé", "Vous avez décliné cette demande de don.");
+      } catch {
+        Alert.alert("Erreur", "Impossible de refuser cette alerte.");
+      }
+    },
+    [updateStatut]
+  );
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={theme.colors.primary} />
 
-      {/* === HEADER === */}
       <Header
         navigation={navigation}
         route={{ name: 'bloodbank' } as any}
@@ -100,7 +153,7 @@ const BloodBankDashboard = () => {
         centerSubtitle="Dashboard Banque de sang"
       />
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={true}>
+      <ScrollView style={styles.content} showsVerticalScrollIndicator>
         <Text style={styles.sectionTitle}>Demandes reçues</Text>
 
         {requests.map((request) => {
@@ -113,10 +166,7 @@ const BloodBankDashboard = () => {
                   <Text style={styles.bloodType}>{request.groupe_sanguin}</Text>
                 </View>
                 <View
-                  style={[
-                    styles.urgencyBadge,
-                    { backgroundColor: urgencyColors.bg },
-                  ]}
+                  style={[styles.urgencyBadge, { backgroundColor: urgencyColors.bg }]}
                 >
                   <Text style={[styles.urgencyText, { color: urgencyColors.text }]}>
                     {request.statut === 'en_attente' ? 'En attente' : request.statut}
@@ -126,7 +176,6 @@ const BloodBankDashboard = () => {
 
               <Text style={styles.units}>{request.quantite} unités requises</Text>
 
-              {/* Infos docteur */}
               {request.docteur && (
                 <View style={{ marginVertical: 6 }}>
                   <Text style={styles.infoText}>
@@ -138,16 +187,13 @@ const BloodBankDashboard = () => {
                 </View>
               )}
 
-              {request.description && <Text style={styles.infoText}>{request.description}</Text>}
-
-              {/* Boutons envoyer / annuler */}
               <View style={styles.buttonContainer}>
                 {!request.alertEnvoyee ? (
                   <TouchableOpacity
                     style={styles.alertButton}
                     onPress={() => handleCreateAlert(request.id)}
                   >
-                    <Text style={styles.alertButtonText}>Envoyer alerte </Text>
+                    <Text style={styles.alertButtonText}>Envoyer alerte</Text>
                   </TouchableOpacity>
                 ) : (
                   <Text style={styles.alertEnvoyeeText}>Alerte envoyée ✅</Text>
@@ -167,6 +213,7 @@ const BloodBankDashboard = () => {
     </SafeAreaView>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: theme.colors.background },

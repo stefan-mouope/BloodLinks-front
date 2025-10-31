@@ -13,6 +13,7 @@ import {
   Modal,
 } from 'react-native';
 import theme from '../../constants/theme';
+import useAuthStore from '../../store/authStore';
 
 interface ProfileProps {
   navigation: any;
@@ -32,16 +33,24 @@ const DoctorProfileScreen = ({ navigation }: ProfileProps) => {
     licenseNumber: 'MD-2018-0542',
   };
 
+  const { user,logout } = useAuthStore();
+
   const handleLogout = () => {
     setShowLogoutModal(true);
   };
 
   const confirmLogout = () => {
-    setShowLogoutModal(false);
+    try{
+      logout();
+      setShowLogoutModal(false);
     Alert.alert('Déconnexion', 'Vous avez été déconnecté avec succès');
     navigation.navigate('Login');
+    }catch (error) {
+      Alert.alert('Erreur', "Une erreur est survenue lors de la déconnexion.");
+      console.error('Erreur lors de la déconnexion :', error);
+    }
+   
   };
-
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={theme.colors.primary} />

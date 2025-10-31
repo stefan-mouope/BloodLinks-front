@@ -5,13 +5,14 @@ import useAuthStore from '../store/authStore';
 // Utilisez l'adresse IP locale pour le développement sur émulateur Android/iOS
 const getBaseURL = () => {
   if (__DEV__) {
-    return Platform.OS === 'android' 
-      ? 'http://10.0.2.2:8000/api/' // Android Emulator
-      : 'http://localhost:8000/api/'; // iOS Simulator ou appareil physique
+    if (Platform.OS === 'android') {
+      return 'http://10.0.2.2:8000/api/'; // Émulateur Android
+    }
+    // Pour ton téléphone physique
+    return 'http://192.168.209.150:8000/api/';
   }
   return 'https://votre-api-production.com/api/';
 };
-
 // Création de l'instance Axios
 const api: AxiosInstance = axios.create({
   baseURL: getBaseURL(),
