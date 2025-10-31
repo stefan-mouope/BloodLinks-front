@@ -123,7 +123,7 @@ const DonorDashboard = () => {
             <View style={styles.actionButtons}>
 
                 {
-                  isValide? (
+                  !isValide? (
                 <TouchableOpacity
                     style={styles.acceptButton}
                     onPress={() => handleAccept(alerte)}
