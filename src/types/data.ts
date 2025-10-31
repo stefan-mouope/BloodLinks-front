@@ -26,6 +26,7 @@ export interface Banque {
     groupe_sanguin: string;
     date_envoi: string;
     statut: string;
+    docteur: Docteur;
   }
 
   export interface Requete{

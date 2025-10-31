@@ -11,7 +11,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "x86"
+			"value" : "arm64-v8a"
 		},
 		{
 			"name" : "ANDROID_NDK",
@@ -99,7 +99,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "x86"
+			"value" : "arm64-v8a"
 		},
 		{
 			"name" : "CMAKE_ANDROID_NDK",
@@ -187,7 +187,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLinks-front/android/app/.cxx/Debug/6u1f6m24/x86"
+			"value" : "/home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLinks-front/android/app/.cxx/Debug/6u1f6m24/arm64-v8a"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -659,7 +659,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "/home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLinks-front/android/app/.cxx/Debug/6u1f6m24/prefab/x86/prefab"
+			"value" : "/home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLinks-front/android/app/.cxx/Debug/6u1f6m24/prefab/arm64-v8a/prefab"
 		},
 		{
 			"name" : "CMAKE_GENERATOR",
@@ -755,7 +755,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "/home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLinks-front/android/app/build/intermediates/cxx/Debug/6u1f6m24/obj/x86"
+			"value" : "/home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLinks-front/android/app/build/intermediates/cxx/Debug/6u1f6m24/obj/arm64-v8a"
 		},
 		{
 			"name" : "CMAKE_LINKER",
@@ -1027,7 +1027,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "/home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLinks-front/android/app/build/intermediates/cxx/Debug/6u1f6m24/obj/x86"
+			"value" : "/home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLinks-front/android/app/build/intermediates/cxx/Debug/6u1f6m24/obj/arm64-v8a"
 		},
 		{
 			"name" : "CMAKE_SHARED_LINKER_FLAGS",
@@ -1270,13 +1270,13 @@
 					"value" : "No help, variable specified on the command line."
 				}
 			],
-<<<<<<<< HEAD:android/app/.cxx/Debug/6u1f6m24/x86/.cmake/api/v1/reply/cache-v2-cc9ad1342c128faea89e.json
+<<<<<<<< HEAD:android/app/.cxx/Debug/6u1f6m24/arm64-v8a/.cmake/api/v1/reply/cache-v2-55b013a0726603dfb8bc.json
 			"type" : "FILEPATH",
 			"value" : "/home/mouope/Android/Sdk/ndk/27.1.12297006/build/cmake/android.toolchain.cmake"
 ========
 			"type" : "UNINITIALIZED",
 			"value" : "/home/lavue/Android/Sdk/ndk/27.1.12297006/build/cmake/android.toolchain.cmake"
->>>>>>>> 871afcc55ee954fa0c0323d945f6cfbbb4b860a2:android/app/.cxx/Debug/37285o23/x86/.cmake/api/v1/reply/cache-v2-5a280f5cb4b91c540dca.json
+>>>>>>>> 871afcc55ee954fa0c0323d945f6cfbbb4b860a2:android/app/.cxx/Debug/6u1f6m24/arm64-v8a/.cmake/api/v1/reply/cache-v2-0987c89009d2023ceccd.json
 		},
 		{
 			"name" : "CMAKE_UNAME",
@@ -1352,7 +1352,7 @@
 				}
 			],
 			"type" : "PATH",
-			"value" : "/home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLinks-front/android/app/.cxx/Debug/6u1f6m24/prefab/x86/prefab/lib/i686-linux-android/cmake/ReactAndroid"
+			"value" : "/home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLinks-front/android/app/.cxx/Debug/6u1f6m24/prefab/arm64-v8a/prefab/lib/aarch64-linux-android/cmake/ReactAndroid"
 		},
 		{
 			"name" : "appmodules_BINARY_DIR",
@@ -1364,7 +1364,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLinks-front/android/app/.cxx/Debug/6u1f6m24/x86"
+			"value" : "/home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLinks-front/android/app/.cxx/Debug/6u1f6m24/arm64-v8a"
 		},
 		{
 			"name" : "appmodules_IS_TOP_LEVEL",
@@ -1400,7 +1400,7 @@
 				}
 			],
 			"type" : "PATH",
-			"value" : "/home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLinks-front/android/app/.cxx/Debug/6u1f6m24/prefab/x86/prefab/lib/i686-linux-android/cmake/fbjni"
+			"value" : "/home/mouope/Documents/Master 1/TPINF4057/Frontend/BloodLinks-front/android/app/.cxx/Debug/6u1f6m24/prefab/arm64-v8a/prefab/lib/aarch64-linux-android/cmake/fbjni"
 		}
 	],
 	"kind" : "cache",
