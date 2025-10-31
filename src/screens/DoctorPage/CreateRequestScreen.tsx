@@ -103,6 +103,9 @@ const CreateRequestScreen = ({ navigation, route }: any) => {
             keyboardType="numeric"
           />
         </View>
+            <View style={styles.infoCard}> 
+              <Text style={styles.infoText}> Votre requête sera envoyée à la banque de sang de votre hôpital. </Text> 
+            </View>        
 
       </ScrollView>
 
@@ -170,6 +173,19 @@ const styles = StyleSheet.create({
     ...theme.shadows.sm,
   },
   submitButtonText: { color: theme.colors.white, fontSize: theme.typography.fontSize.base, fontWeight: theme.typography.fontWeight.bold },
+  infoCard: { 
+    backgroundColor: '#E6F2FF', 
+    marginHorizontal: theme.spacing.md,
+     marginTop: theme.spacing.lg, 
+     marginBottom: theme.spacing.xl, 
+     padding: theme.spacing.md, 
+     borderRadius: theme.borderRadius.lg, 
+     borderLeftWidth: 4,
+      borderLeftColor: theme.colors.info, 
+    },
+     infoText: {
+       fontSize: theme.typography.fontSize.sm, 
+       color: theme.colors.info, lineHeight: 20 },
 });
 
 export default CreateRequestScreen;
