@@ -20,6 +20,7 @@ import OnboardingScreen from '../screens/onboarding/Onboarding';
 import FirstPageScreen from '../screens/FirstPage/FirstPageScreen';
 import LoginScreen from '../screens/Auth/LoginScreen';
 import SignUpScreen from '../screens/Auth/SignUpScreen';
+import SentAlerts from '../screens/BloodBank/SendAlerts';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -61,6 +62,11 @@ const BankTabs = () => (
       name="BankHome"
       component={BloodBankDashboard}
       options={{ tabBarLabel: 'Accueil', tabBarIcon: () => <Text style={{ fontSize: 24 }}>🏠</Text> }}
+    />
+    <Tab.Screen
+      name="alert"
+      component={SentAlerts}
+      options={{ tabBarLabel: 'alert', tabBarIcon: () => <Text style={{ fontSize: 24 }}>🔔</Text> }}
     />
     <Tab.Screen
       name="BankProfile"

@@ -110,9 +110,9 @@ const SentAlerts = () => {
         centerSubtitle="Alertes envoyées"
       />
 
-      <TouchableOpacity style={styles.reloadButton} onPress={fetchSentAlerts}>
+      {/* <TouchableOpacity style={styles.reloadButton} onPress={fetchSentAlerts}>
         <Text style={styles.reloadButtonText}>🔄 Reload</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator>
         <Text style={styles.sectionTitle}>Alertes envoyées</Text>
