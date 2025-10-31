@@ -45,6 +45,7 @@ endif()
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   include("/home/lavue/Dev/js/React Native/BloodLinks-front/android/app/.cxx/Debug/37285o23/x86_64/rnasyncstorage_autolinked_build/cmake_install.cmake")
+  include("/home/lavue/Dev/js/React Native/BloodLinks-front/android/app/.cxx/Debug/37285o23/x86_64/rnpicker_autolinked_build/cmake_install.cmake")
   include("/home/lavue/Dev/js/React Native/BloodLinks-front/android/app/.cxx/Debug/37285o23/x86_64/rngesturehandler_codegen_autolinked_build/cmake_install.cmake")
   include("/home/lavue/Dev/js/React Native/BloodLinks-front/android/app/.cxx/Debug/37285o23/x86_64/safeareacontext_autolinked_build/cmake_install.cmake")
   include("/home/lavue/Dev/js/React Native/BloodLinks-front/android/app/.cxx/Debug/37285o23/x86_64/rnscreens_autolinked_build/cmake_install.cmake")
