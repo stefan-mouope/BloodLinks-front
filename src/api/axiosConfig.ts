@@ -11,7 +11,7 @@ const getBaseURL = () => {
     // Pour ton téléphone physique
     return 'http://192.168.209.150:8000/api/';
   }
-  return 'https://votre-api-production.com/api/';
+  return 'https://https://bloodlinks.onrender.com/api/';
 };
 // Création de l'instance Axios
 const api: AxiosInstance = axios.create({
