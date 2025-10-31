@@ -22,7 +22,7 @@ import { useAlertes } from "../../hooks/useAlertes";
 interface RequeteWithAlert extends Requete {
   alertEnvoyee?: boolean; // état local pour savoir si l'alerte a été envoyée
 }
-
+// 
 const BloodBankDashboard = () => {
   const navigation = useNavigation<any>();
   const [requests, setRequests] = useState<RequeteWithAlert[]>([]);
