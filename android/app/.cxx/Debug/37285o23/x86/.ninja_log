@@ -62,3 +62,5 @@
 85661	101870	1761891408494836637	rnscreens_autolinked_build/CMakeFiles/react_codegen_rnscreens.dir/home/lavue/Dev/js/React_Native/BloodLinks-front/node_modules/react-native-screens/android/build/generated/source/codegen/jni/react/renderer/components/rnscreens/EventEmitters.cpp.o	f9781708b28b4d79
 101870	101983	1761891408646840540	/home/lavue/Dev/js/React Native/BloodLinks-front/android/app/build/intermediates/cxx/Debug/37285o23/obj/x86/libreact_codegen_rnscreens.so	58befc7609d39c41
 101983	102094	1761891408758843416	/home/lavue/Dev/js/React Native/BloodLinks-front/android/app/build/intermediates/cxx/Debug/37285o23/obj/x86/libappmodules.so	c0552500e2b8bd7e
+0	10	0	/home/lavue/Dev/js/React Native/BloodLinks-front/android/app/.cxx/Debug/37285o23/x86/CMakeFiles/cmake.verify_globs	16fe564cf7f0830c
+10	60	0	/home/lavue/Dev/js/React Native/BloodLinks-front/android/app/.cxx/Debug/37285o23/x86/CMakeFiles/cmake.verify_globs	16fe564cf7f0830c
