@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
+import { getStatusBarHeight } from 'react-native-status-bar-height';
 import { theme } from '../../constants/theme';
 
-// On crée un type simple pour nos props
+// Type des props
 interface HeaderProps {
   navigation: any;
   route: { name: string };
@@ -119,29 +120,29 @@ const Header: React.FC<HeaderProps> = ({
   );
 };
 
+// Hauteur de la barre de statut pour Android
+const STATUS_BAR_HEIGHT = Platform.OS === 'android' ? getStatusBarHeight() : 0;
+
 const styles = StyleSheet.create({
   container: {
     backgroundColor: theme.colors.primary,
-    height: 120,
-    position: 'relative',
-    paddingTop: 30,
-    paddingVertical: 20,
+    height: 100 + STATUS_BAR_HEIGHT,
+    paddingTop: STATUS_BAR_HEIGHT + 10,
     paddingHorizontal: 16,
-    alignItems: "center",
+    alignItems: 'center',
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOpacity: 0.2,
     shadowOffset: { width: 0, height: 3 },
     shadowRadius: 4,
     elevation: 5,
   },
   header: {
-    
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: theme.spacing.md,
+    width: '100%',
   },
   backButton: {
     padding: theme.spacing.xs,
@@ -160,14 +161,14 @@ const styles = StyleSheet.create({
   },
   topLeft: {
     position: 'absolute',
-    top: 40,
+    top: STATUS_BAR_HEIGHT + 10,
     left: 12,
     flexDirection: 'row',
     alignItems: 'center',
   },
   topRight: {
     position: 'absolute',
-    top: 40,
+    top: STATUS_BAR_HEIGHT + 10,
     right: 12,
     flexDirection: 'row',
     gap: theme.spacing.md,
@@ -188,14 +189,14 @@ const styles = StyleSheet.create({
   },
   bottomCenter: {
     position: 'absolute',
-    bottom: 30,
+    bottom: 25,
     left: 0,
     right: 0,
     alignItems: 'center',
   },
   bottomSubtitle: {
     position: 'absolute',
-    bottom: 10,
+    bottom: 8,
     left: 0,
     right: 0,
     alignItems: 'center',
@@ -218,7 +219,7 @@ const styles = StyleSheet.create({
     top: -4,
     right: -4,
     backgroundColor: '#FBBF24',
-    borderRadius: theme.borderRadius.full,
+    borderRadius: 10,
     width: 18,
     height: 18,
     alignItems: 'center',
