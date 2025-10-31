@@ -2,6 +2,7 @@ C/C++ Structured Logu
 s
 q/home/lavue/Dev/js/React Native/BloodLinks-front/android/app/.cxx/Debug/37285o23/x86/additional_project_files.txtC
 A
+<<<<<<< HEAD
 ?com.android.build.gradle.internal.cxx.io.EncodedFileFingerPrint	Î³øØ£3Ë Ë²øØ£3r
 p
 n/home/lavue/Dev/js/React Native/BloodLinks-front/android/app/.cxx/Debug/37285o23/x86/android_gradle_build.json	Î³øØ£3Ø# Ó²øØ£3w
@@ -34,3 +35,39 @@ x
 v/home/lavue/Dev/js/React Native/BloodLinks-front/node_modules/react-native-screens/android/src/main/jni/CMakeLists.txt	Ï³øØ£3² „»¦ì¡3Š
 ‡
 „/home/lavue/Dev/js/React Native/BloodLinks-front/node_modules/react-native/ReactAndroid/cmake-utils/default-app-setup/CMakeLists.txt	Ï³øØ£3ð àÊ¦ì¡3
+=======
+?com.android.build.gradle.internal.cxx.io.EncodedFileFingerPrint	úïÊÒ£3Ë ‹ï‚Ò£3r
+p
+n/home/lavue/Dev/js/React Native/BloodLinks-front/android/app/.cxx/Debug/37285o23/x86/android_gradle_build.json	ðÊÒ£3Æ+ ‹ï‚Ò£3w
+u
+s/home/lavue/Dev/js/React Native/BloodLinks-front/android/app/.cxx/Debug/37285o23/x86/android_gradle_build_mini.json	ðÊÒ£3Ê' £ï‚Ò£3d
+b
+`/home/lavue/Dev/js/React Native/BloodLinks-front/android/app/.cxx/Debug/37285o23/x86/build.ninja	ðÊÒ£3Ê× ïî‚Ò£3h
+f
+d/home/lavue/Dev/js/React Native/BloodLinks-front/android/app/.cxx/Debug/37285o23/x86/build.ninja.txt	ðÊÒ£3m
+k
+i/home/lavue/Dev/js/React Native/BloodLinks-front/android/app/.cxx/Debug/37285o23/x86/build_file_index.txt	ðÊÒ£3± «¾ÂÐ£3n
+l
+j/home/lavue/Dev/js/React Native/BloodLinks-front/android/app/.cxx/Debug/37285o23/x86/compile_commands.json	ðÊÒ£3Êˆ	 ïî‚Ò£3r
+p
+n/home/lavue/Dev/js/React Native/BloodLinks-front/android/app/.cxx/Debug/37285o23/x86/compile_commands.json.bin	ðÊÒ£3	žÞ ïî‚Ò£3x
+v
+t/home/lavue/Dev/js/React Native/BloodLinks-front/android/app/.cxx/Debug/37285o23/x86/metadata_generation_command.txt	ðÊÒ£3
+ƒ ð˜ŸÇ£3k
+i
+g/home/lavue/Dev/js/React Native/BloodLinks-front/android/app/.cxx/Debug/37285o23/x86/prefab_config.json	ðÊÒ£3º ð˜ŸÇ£3p
+n
+l/home/lavue/Dev/js/React Native/BloodLinks-front/android/app/.cxx/Debug/37285o23/x86/symbol_folder_index.txt	ðÊÒ£3k ð˜ŸÇ£3§
+¤
+¡/home/lavue/Dev/js/React Native/BloodLinks-front/node_modules/@react-native-async-storage/async-storage/android/build/generated/source/codegen/jni/CMakeLists.txt	ðÊÒ£3‚ øÆêÑ£3
+
+}/home/lavue/Dev/js/React Native/BloodLinks-front/node_modules/@react-native-picker/picker/android/src/main/jni/CMakeLists.txt	ðÊÒ£3› ‚Ê‰Ç£3š
+—
+”/home/lavue/Dev/js/React Native/BloodLinks-front/node_modules/react-native-gesture-handler/android/build/generated/source/codegen/jni/CMakeLists.txt	ðÊÒ£3¾ ÌêÑ£3†
+ƒ
+€/home/lavue/Dev/js/React Native/BloodLinks-front/node_modules/react-native-safe-area-context/android/src/main/jni/CMakeLists.txt	ðÊÒ£3Ç ”±¦ì¡3z
+x
+v/home/lavue/Dev/js/React Native/BloodLinks-front/node_modules/react-native-screens/android/src/main/jni/CMakeLists.txt	ðÊÒ£3² „»¦ì¡3Š
+‡
+„/home/lavue/Dev/js/React Native/BloodLinks-front/node_modules/react-native/ReactAndroid/cmake-utils/default-app-setup/CMakeLists.txt	ðÊÒ£3ð àÊ¦ì¡3
+>>>>>>> origin/main
