@@ -19,12 +19,16 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../FirstPage/types';
 import useAuthStore from '../../store/authStore';
+import useNotification from '../../firabase/useNotification';
 
 type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
 
 const LoginScreen = () => {
   const navigation = useNavigation<LoginScreenNavigationProp>();
-  const { login, isLoading, error: authError } = useAuthStore();
+  const { login, isLoading, error: authError, user } = useAuthStore();
+
+  // 🔹 Hook pour envoyer automatiquement le token FCM dès que l'utilisateur est connecté
+  useNotification(user?.id || null);
 
   const [formData, setFormData] = useState({
     email: '',
@@ -34,9 +38,7 @@ const LoginScreen = () => {
 
   const handleInputChange = (field: keyof typeof formData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: undefined }));
-    }
+    if (errors[field]) setErrors((prev) => ({ ...prev, [field]: undefined }));
   };
 
   const validateForm = (): boolean => {
@@ -57,24 +59,24 @@ const LoginScreen = () => {
     if (!validateForm()) return;
 
     try {
-      await login(
-        {
-          email: formData.email.trim(),
-          password: formData.password.trim(),
-        },
-        
-      );
-      navigation.navigate('Home');  
-      console.log('Connexion réussie');
+      const success = await login({
+        email: formData.email.trim(),
+        password: formData.password.trim(),
+      });
+
+      if (success) {
+        console.log('Connexion réussie');
+        navigation.navigate('Home');  
+      }
     } catch (err) {
       console.error('Erreur connexion:', err);
       Alert.alert('Erreur', authError || 'Email ou mot de passe incorrect');
     }
   };
- const handleBackTFirsPage = () => {
-    navigation.navigate('FirstPage')
-  };
 
+  const handleBackFirstPage = () => {
+    navigation.navigate('FirstPage');
+  };
 
   return (
     <SafeAreaView
@@ -84,7 +86,7 @@ const LoginScreen = () => {
         paddingHorizontal: safeAreaPadding(theme.spacing.lg),
       }}
     >
-      <TouchableOpacity style={styles.backButton} onPress={handleBackTFirsPage}>
+      <TouchableOpacity style={styles.backButton} onPress={handleBackFirstPage}>
         <Text style={styles.backButtonText}>←</Text>
       </TouchableOpacity>
       <ScrollView
@@ -182,7 +184,7 @@ const styles = StyleSheet.create({
     marginBottom: responsiveSize(theme.spacing.md),
     paddingHorizontal: responsiveSize(theme.spacing.md),
   },
-    backButton: {
+  backButton: {
     position: 'absolute',
     top: 10,
     left: 10,
@@ -195,4 +197,3 @@ const styles = StyleSheet.create({
 });
 
 export default LoginScreen;
-  

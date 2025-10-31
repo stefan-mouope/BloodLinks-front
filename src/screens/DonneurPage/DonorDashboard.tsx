@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,20 +8,24 @@ import {
   SafeAreaView,
   StatusBar,
   Alert,
+  RefreshControl,
+  ActivityIndicator,
 } from "react-native";
 import { theme } from "../../constants/theme";
 import useNotificationListener from "../../firabase/useNotificationListener";
 import { useAlertes } from "../../hooks/useAlertes"; 
 import { Alerte } from "../../types/data";
 import useAuthStore from "../../store/authStore";
-// 
-const DonorDashboard = () => {
-  const {user} = useAuthStore()
-  const groupeSanguin = user?.groupe_sanguin || 'O+'; // à remplacer par celui du donneur connecté
-  const { alertes, loading, refresh, updateStatut } = useAlertes(groupeSanguin);
-  const processedIds = useRef(new Set<string>());
-  const [isValide, setIsValide]= useState(false)
 
+const DonorDashboard = () => {
+  const { user } = useAuthStore();
+  const groupeSanguin = user?.groupe_sanguin || 'O+';
+  const { alertes, loading, refresh, updateStatut } = useAlertes(groupeSanguin);
+
+  const [refreshing, setRefreshing] = useState(false);
+  const processedIds = useRef(new Set<string>());
+
+  /** --- Notifications push --- */
   const handleNotification = useCallback(
     async (data: any) => {
       const uniqueId = data.id || `${data.bloodType}-${Date.now()}`;
@@ -35,11 +39,24 @@ const DonorDashboard = () => {
 
   useNotificationListener(handleNotification);
 
+  /** --- Pull-to-refresh --- */
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await refresh();
+    setRefreshing(false);
+  }, [refresh]);
+
+  /** --- Auto-refresh toutes les 10 secondes --- */
+  useEffect(() => {
+    const interval = setInterval(refresh, 10000);
+    return () => clearInterval(interval);
+  }, [refresh]);
+
   const handleAccept = useCallback(
     async (alerte: Alerte) => {
       Alert.alert(
         "Confirmer le don",
-        `Êtes-vous disponible pour donner du   sang ${alerte.requete.groupe_sanguin} ?`,
+        `Êtes-vous disponible pour donner du sang ${alerte.requete.groupe_sanguin} ?`,
         [
           { text: "Annuler", style: "cancel" },
           {
@@ -47,7 +64,6 @@ const DonorDashboard = () => {
             onPress: async () => {
               try {
                 await updateStatut(alerte.id, "en_attente");
-                setIsValide(true)
                 Alert.alert("Merci ❤️", "Votre disponibilité a été confirmée !");
               } catch {
                 Alert.alert("Erreur", "Impossible de confirmer cette alerte.");
@@ -76,7 +92,6 @@ const DonorDashboard = () => {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#C53030" />
 
-      {/* 🔴 HEADER */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>🩸 Don de Sang - Tableau de Bord</Text>
         <Text style={styles.headerSubtitle}>
@@ -84,11 +99,13 @@ const DonorDashboard = () => {
         </Text>
       </View>
 
-      {/* CONTENU */}
-      <ScrollView style={styles.content}>
+      <ScrollView
+        style={styles.content}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      >
         <Text style={styles.sectionTitle}>Alertes reçues ({alertes.length})</Text>
 
-        {loading && <Text style={styles.loadingText}>Chargement des alertes...</Text>}
+        {loading && <ActivityIndicator size="large" color="#C53030" style={{ marginVertical: 16 }} />}
 
         {alertes.length === 0 && !loading && (
           <View style={styles.emptyState}>
@@ -121,19 +138,12 @@ const DonorDashboard = () => {
             </View>
 
             <View style={styles.actionButtons}>
-
-                {
-                  isValide? (
-                <TouchableOpacity
-                    style={styles.acceptButton}
-                    onPress={() => handleAccept(alerte)}
-                  >
-                    <Text style={styles.buttonText}>✅ Accepter</Text>
+              <TouchableOpacity
+                style={styles.acceptButton}
+                onPress={() => handleAccept(alerte)}
+              >
+                <Text style={styles.buttonText}>✅ Accepter</Text>
               </TouchableOpacity>
-                  ):<Text style={styles.buttonText}>✅ Accepter</Text>
-
-                }
-
 
               <TouchableOpacity
                 style={styles.declineButton}
@@ -149,7 +159,6 @@ const DonorDashboard = () => {
   );
 };
 
-export default DonorDashboard;
 
 // ---------------------------
 // STYLES
@@ -275,3 +284,5 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
+
+export default DonorDashboard;

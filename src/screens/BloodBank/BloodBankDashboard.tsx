@@ -8,6 +8,7 @@ import {
   SafeAreaView,
   StatusBar,
   Alert,
+  RefreshControl,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { theme } from '../../constants/theme';
@@ -16,23 +17,22 @@ import { AlertService } from '../../services/alert/alertServices';
 import useAuthStore from '../../store/authStore';
 import requeteService from '../../services/request/requestService';
 import { Requete, Alerte } from '../../types/data';
-import useNotificationListener from "../../firabase/useNotificationListener"; // ✅ correction d’orthographe du dossier
-import { useAlertes } from "../../hooks/useAlertes"; 
+import useNotificationListener from "../../firabase/useNotificationListener";
+import { useAlertes } from "../../hooks/useAlertes";
 
 interface RequeteWithAlert extends Requete {
-  alertEnvoyee?: boolean; // état local pour savoir si l'alerte a été envoyée
+  alertEnvoyee?: boolean;
 }
-// 
+
 const BloodBankDashboard = () => {
   const navigation = useNavigation<any>();
   const [requests, setRequests] = useState<RequeteWithAlert[]>([]);
-  const [notificationCount, setNotificationCount] = useState(3); // exemple
+  const [notificationCount, setNotificationCount] = useState(3);
+  const [refreshing, setRefreshing] = useState(false);
   const { user } = useAuthStore();
-
-  // === Référence pour éviter les doublons de notifications ===
   const processedIds = useRef<Set<string>>(new Set());
 
-  // === Récupérer toutes les requêtes de la banque ===
+  /** --- Récupération des requêtes --- */
   const fetchRequetes = useCallback(async () => {
     if (!user?.id) return;
     try {
@@ -44,11 +44,21 @@ const BloodBankDashboard = () => {
     }
   }, [user]);
 
-  useEffect(() => {
-    fetchRequetes();
+  /** --- Rafraîchissement manuel (pull-to-refresh) --- */
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await fetchRequetes();
+    setRefreshing(false);
   }, [fetchRequetes]);
 
-  // === Gestion des notifications push ===
+  /** --- Rafraîchissement automatique toutes les 10 secondes --- */
+  useEffect(() => {
+    fetchRequetes();
+    const interval = setInterval(fetchRequetes, 10000); // 10 secondes
+    return () => clearInterval(interval);
+  }, [fetchRequetes]);
+
+  /** --- Notification Listener --- */
   const handleNotification = useCallback(async (data: any) => {
     const uniqueId = data.id || `${data.bloodType}-${Date.now()}`;
     if (processedIds.current.has(uniqueId)) return;
@@ -59,7 +69,7 @@ const BloodBankDashboard = () => {
 
   useNotificationListener(handleNotification);
 
-  // === Couleur selon le statut ===
+  /** --- Couleur selon le statut --- */
   const getUrgencyColor = (statut: string) => {
     switch (statut) {
       case 'critique':
@@ -73,7 +83,7 @@ const BloodBankDashboard = () => {
     }
   };
 
-  // === Créer une alerte ===
+  /** --- Créer une alerte --- */
   const handleCreateAlert = async (requestId: number) => {
     try {
       const request = requests.find((r) => r.id === requestId);
@@ -84,11 +94,8 @@ const BloodBankDashboard = () => {
         groupe_sanguin: request.groupe_sanguin,
       });
 
-      // Mettre à jour l’état
       setRequests((prev) =>
-        prev.map((r) =>
-          r.id === requestId ? { ...r, alertEnvoyee: true } : r
-        )
+        prev.map((r) => (r.id === requestId ? { ...r, alertEnvoyee: true } : r))
       );
 
       Alert.alert('Succès', 'Alerte créée avec succès');
@@ -98,12 +105,12 @@ const BloodBankDashboard = () => {
     }
   };
 
-  // === Annuler une requête (localement) ===
+  /** --- Annuler une requête localement --- */
   const handleCancelRequest = (requestId: number) => {
     setRequests((prev) => prev.filter((r) => r.id !== requestId));
   };
 
-  // === Gestion des alertes reçues (banque qui accepte/refuse) ===
+  /** --- Gestion des alertes --- */
   const { updateStatut } = useAlertes();
 
   const handleAccept = useCallback(
@@ -153,7 +160,13 @@ const BloodBankDashboard = () => {
         centerSubtitle="Dashboard Banque de sang"
       />
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator>
+      <ScrollView
+        style={styles.content}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         <Text style={styles.sectionTitle}>Demandes reçues</Text>
 
         {requests.map((request) => {
@@ -162,9 +175,7 @@ const BloodBankDashboard = () => {
           return (
             <View key={request.id} style={styles.card}>
               <View style={styles.cardHeader}>
-                <View style={styles.bloodTypeContainer}>
-                  <Text style={styles.bloodType}>{request.groupe_sanguin}</Text>
-                </View>
+                <Text style={styles.bloodType}>{request.groupe_sanguin}</Text>
                 <View
                   style={[styles.urgencyBadge, { backgroundColor: urgencyColors.bg }]}
                 >
@@ -214,7 +225,7 @@ const BloodBankDashboard = () => {
   );
 };
 
-
+/** === Styles === */
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: theme.colors.background },
   content: { flex: 1, padding: theme.spacing.md, marginTop: 12 },
@@ -231,8 +242,11 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.md,
     ...theme.shadows.sm,
   },
-  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: theme.spacing.sm },
-  bloodTypeContainer: {},
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: theme.spacing.sm,
+  },
   bloodType: {
     fontSize: theme.typography.fontSize.xl,
     fontWeight: theme.typography.fontWeight.bold,

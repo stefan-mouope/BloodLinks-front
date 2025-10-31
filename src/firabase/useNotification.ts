@@ -1,15 +1,17 @@
 // src/hooks/useNotification.ts
 import { useEffect } from 'react';
-import { PermissionsAndroid, Alert, Platform } from 'react-native';
+import { PermissionsAndroid, Platform } from 'react-native';
 import { NotificationService } from '../services/notifications/NotificationService';
 
 export default function useNotification(userId: number | null) {
   useEffect(() => {
+    if (!userId) return;
+
     const initNotifications = async () => {
       const notificationService = new NotificationService();
 
-      // Demander la permission
       try {
+        // Demander la permission notifications
         if (Platform.OS === 'android') {
           const granted = await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
@@ -26,9 +28,10 @@ export default function useNotification(userId: number | null) {
         return;
       }
 
-      // Récupérer et envoyer le token si nécessaire
+      // Récupérer le token FCM
       const token = await notificationService.getToken();
       if (token) {
+        console.log('✅ Token FCM obtenu:', token);
         await notificationService.sendTokenToServer(token, userId);
       }
     };
