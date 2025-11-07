@@ -5,7 +5,7 @@ import { Alerte } from "../types/data";
 /**
  * Hook pour gérer les alertes (liste, mise à jour, statut, etc.)
  */
-export function useAlertes(groupeSanguin?: string) {
+export function useAlertes(groupeSanguin: string) {
   const [alertes, setAlertes] = useState<Alerte[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -17,9 +17,7 @@ export function useAlertes(groupeSanguin?: string) {
     setLoading(true);
     setError(null);
     try {
-      const data = groupeSanguin
-        ? await AlertService.getAlertesByGroupe(groupeSanguin)
-        : await AlertService.getAllAlertes();
+      const data = await AlertService.getAlertesByGroupe(groupeSanguin);
       setAlertes(data);
     } catch (err: any) {
       setError(err?.response?.data?.detail || err.message || "Erreur inconnue");

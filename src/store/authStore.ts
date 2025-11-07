@@ -3,8 +3,6 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import authService from '../services/auth/authService';
 import { AuthState, LoginCredentials, RegisterData } from '../types/auth';
-import { NavigationProp } from '@react-navigation/native';
-// import { RootStackParamList } from '../navigation/AppNavigator';
 import { Alert } from 'react-native';
 import { RootStackParamList } from '../screens/FirstPage/types';
 
@@ -21,72 +19,71 @@ const useAuthStore = create<AuthState>()(
       error: null,
 
       // 🔐 Connexion
-      login: async (
-        credentials: LoginCredentials,
-       
-      ) => {
+      login: async (credentials: LoginCredentials) => {
         set({ isLoading: true, error: null });
         try {
           const { user, access, refresh } = await authService.login(credentials);
-          console.log(user,access,refresh)
           set({
             user,
             accessToken: access,
-            refreshToken: refresh ,
+            refreshToken: refresh,
             isAuthenticated: true,
             isLoading: false,
             error: null,
           });
-          console.log('user store',user)
+          console.log('✅ Connexion réussie pour:', user);
           return user;
-        } catch (error) {
-          const errorMessage =
-            error instanceof Error ? error.message : 'Échec de la connexion';
+        } catch (error: any) {
+          const message =
+            error.response?.data?.detail || 'Échec de la connexion. Vérifie tes identifiants.';
           set({
-            error: errorMessage,
+            error: message,
             isLoading: false,
             isAuthenticated: false,
           });
-          throw error;
+          throw new Error(message);
         }
       },
 
       // 🧾 Inscription
       register: async (userData: RegisterData) => {
-  set({ isLoading: true, error: null });
-  try {
-    const response = await authService.register(userData);
+        set({ isLoading: true, error: null });
+        try {
+          const response = await authService.register(userData);
+          set({
+            isLoading: false,
+            error: null,
+            user: response.user ?? null,
+            accessToken: response.access ?? null,
+            refreshToken: response.refresh ?? null,
+            isAuthenticated: !!(response.access && response.refresh),
+          });
+          return true;
+        } catch (error: any) {
+          const message =
+            error.response?.data?.detail || "Échec de l'inscription. Réessaie plus tard.";
+          set({
+            error: message,
+            isLoading: false,
+            isAuthenticated: false,
+          });
+          return false;
+        }
+      },
 
-    // Si succès
-    set({
-      isLoading: false,
-      error: null,
-      user: response.user ?? null,
-      accessToken: response.access ?? null,
-      refreshToken: response.refresh ?? null,
-      isAuthenticated: !!(response.access && response.refresh),
-    });
-
-    return true; // ✅ renvoie toujours un booléen en cas de succès
-  } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Échec de l'inscription";
-    set({
-      error: errorMessage,
-      isLoading: false,
-      isAuthenticated: false,
-    });
-    return false; // ✅ renvoie false en cas d’échec
-  }
-},
       // 🚪 Déconnexion
       logout: async () => {
         set({ isLoading: true });
         try {
-          await authService.logout();
-        } catch (error) {
-          console.error('Erreur lors de la déconnexion:', error);
+          const { accessToken, refreshToken } = get();
+
+          if (refreshToken) {
+            await authService.logout(accessToken, refreshToken); // ✅ on passe les tokens ici
+          }
+        } catch (error: any) {
+          console.error('Erreur lors de la déconnexion:', error.response?.data || error.message);
         } finally {
+          // 🔄 On réinitialise toujours l’état local
           set({
             user: null,
             accessToken: null,
@@ -96,35 +93,30 @@ const useAuthStore = create<AuthState>()(
             error: null,
           });
         }
-        
       },
 
       // 🔍 Vérification de l’authentification
-   checkAuth: async () => {
-  const { user, accessToken, refreshToken } = get();
-// Alert.alert('test')
-console.log(user)
-  // Si aucune donnée n’est enregistrée → pas connecté
-  if (!user || !accessToken || !refreshToken) {
-    set({
-      isAuthenticated: false,
-      isLoading: false,
-    });
-    return false;
-  }
+      checkAuth: async () => {
+        const { user, accessToken, refreshToken } = get();
+        if (!user || !accessToken || !refreshToken) {
+          set({
+            isAuthenticated: false,
+            isLoading: false,
+          });
+          return false;
+        }
 
-  // Sinon, on considère l’utilisateur comme connecté
-  set({
-    isAuthenticated: true,
-    isLoading: false,
-    user,
-    accessToken,
-    refreshToken,
-    error: null,
-  });
+        set({
+          isAuthenticated: true,
+          isLoading: false,
+          user,
+          accessToken,
+          refreshToken,
+          error: null,
+        });
 
-  return true;
-},
+        return true;
+      },
 
       // 🔁 Rafraîchissement du token
       refreshAccessToken: async () => {
@@ -156,7 +148,7 @@ console.log(user)
       }),
       onRehydrateStorage: () => () => {
         _hasHydrated = true;
-        console.log('Rehydration terminée ✅');
+        console.log('🧊 Réhydratation terminée ✅');
       },
     }
   )
