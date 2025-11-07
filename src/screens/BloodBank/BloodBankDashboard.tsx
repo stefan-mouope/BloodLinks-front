@@ -39,7 +39,7 @@ const BloodBankDashboard = () => {
       const data: RequeteWithAlert[] = await requeteService.getByBanque(user.user.id);
       setRequests(data);
     } catch (error) {
-      console.error('Erreur récupération requêtes :', error);
+      console.error('Erreur récupération       requêtes :', error);
       Alert.alert('Erreur', "Impossible de récupérer les requêtes");
     }
   }, [user]);
