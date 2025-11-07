@@ -1,0 +1,116 @@
+{
+	"cmake" : 
+	{
+		"generator" : 
+		{
+			"multiConfig" : false,
+			"name" : "Ninja"
+		},
+		"paths" : 
+		{
+			"cmake" : "/home/mouope/Android/Sdk/cmake/3.22.1/bin/cmake",
+			"cpack" : "/home/mouope/Android/Sdk/cmake/3.22.1/bin/cpack",
+			"ctest" : "/home/mouope/Android/Sdk/cmake/3.22.1/bin/ctest",
+			"root" : "/home/mouope/Android/Sdk/cmake/3.22.1/share/cmake-3.22"
+		},
+		"version" : 
+		{
+			"isDirty" : false,
+			"major" : 3,
+			"minor" : 22,
+			"patch" : 1,
+			"string" : "3.22.1-g37088a8",
+			"suffix" : "g37088a8"
+		}
+	},
+	"objects" : 
+	[
+		{
+<<<<<<<< HEAD:android/app/.cxx/Debug/37285o23/x86_64/.cmake/api/v1/reply/index-2025-10-31T16-10-32-0981.json
+			"jsonFile" : "codemodel-v2-0c9dd787a0e77fb13b90.json",
+========
+			"jsonFile" : "codemodel-v2-88721fcc06afcab7c17d.json",
+>>>>>>>> origin/yves:android/app/.cxx/Debug/37285o23/x86/.cmake/api/v1/reply/index-2025-10-31T17-12-34-0099.json
+			"kind" : "codemodel",
+			"version" : 
+			{
+				"major" : 2,
+				"minor" : 3
+			}
+		},
+		{
+<<<<<<<< HEAD:android/app/.cxx/Debug/37285o23/x86_64/.cmake/api/v1/reply/index-2025-10-31T16-10-32-0981.json
+			"jsonFile" : "cache-v2-cc9ad1342c128faea89e.json",
+========
+			"jsonFile" : "cache-v2-c48877b387f057b84976.json",
+>>>>>>>> origin/yves:android/app/.cxx/Debug/37285o23/x86/.cmake/api/v1/reply/index-2025-10-31T17-12-34-0099.json
+			"kind" : "cache",
+			"version" : 
+			{
+				"major" : 2,
+				"minor" : 0
+			}
+		},
+		{
+<<<<<<<< HEAD:android/app/.cxx/Debug/37285o23/x86_64/.cmake/api/v1/reply/index-2025-10-31T16-10-32-0981.json
+			"jsonFile" : "cmakeFiles-v1-ef6b2ae4017c29907a21.json",
+========
+			"jsonFile" : "cmakeFiles-v1-04eb4ac68ce69cd86634.json",
+>>>>>>>> origin/yves:android/app/.cxx/Debug/37285o23/x86/.cmake/api/v1/reply/index-2025-10-31T17-12-34-0099.json
+			"kind" : "cmakeFiles",
+			"version" : 
+			{
+				"major" : 1,
+				"minor" : 0
+			}
+		}
+	],
+	"reply" : 
+	{
+		"client-agp" : 
+		{
+			"cache-v2" : 
+			{
+<<<<<<<< HEAD:android/app/.cxx/Debug/37285o23/x86_64/.cmake/api/v1/reply/index-2025-10-31T16-10-32-0981.json
+				"jsonFile" : "cache-v2-cc9ad1342c128faea89e.json",
+========
+				"jsonFile" : "cache-v2-c48877b387f057b84976.json",
+>>>>>>>> origin/yves:android/app/.cxx/Debug/37285o23/x86/.cmake/api/v1/reply/index-2025-10-31T17-12-34-0099.json
+				"kind" : "cache",
+				"version" : 
+				{
+					"major" : 2,
+					"minor" : 0
+				}
+			},
+			"cmakeFiles-v1" : 
+			{
+<<<<<<<< HEAD:android/app/.cxx/Debug/37285o23/x86_64/.cmake/api/v1/reply/index-2025-10-31T16-10-32-0981.json
+				"jsonFile" : "cmakeFiles-v1-ef6b2ae4017c29907a21.json",
+========
+				"jsonFile" : "cmakeFiles-v1-04eb4ac68ce69cd86634.json",
+>>>>>>>> origin/yves:android/app/.cxx/Debug/37285o23/x86/.cmake/api/v1/reply/index-2025-10-31T17-12-34-0099.json
+				"kind" : "cmakeFiles",
+				"version" : 
+				{
+					"major" : 1,
+					"minor" : 0
+				}
+			},
+			"codemodel-v2" : 
+			{
+<<<<<<<< HEAD:android/app/.cxx/Debug/37285o23/x86_64/.cmake/api/v1/reply/index-2025-10-31T16-10-32-0981.json
+				"jsonFile" : "codemodel-v2-0c9dd787a0e77fb13b90.json",
+========
+				"jsonFile" : "codemodel-v2-88721fcc06afcab7c17d.json",
+>>>>>>>> origin/yves:android/app/.cxx/Debug/37285o23/x86/.cmake/api/v1/reply/index-2025-10-31T17-12-34-0099.json
+				"kind" : "codemodel",
+				"version" : 
+				{
+					"major" : 2,
+					"minor" : 3
+				}
+			}
+		}
+	}
+}

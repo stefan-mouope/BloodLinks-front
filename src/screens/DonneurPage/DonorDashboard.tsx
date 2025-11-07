@@ -13,13 +13,13 @@ import {
 } from "react-native";
 import { theme } from "../../constants/theme";
 import useNotificationListener from "../../firabase/useNotificationListener";
-import { useAlertes } from "../../hooks/useAlertes"; 
+import { useAlertes } from "../../hooks/useAlertes";
 import { Alerte } from "../../types/data";
 import useAuthStore from "../../store/authStore";
 
 const DonorDashboard = () => {
   const { user } = useAuthStore();
-  const groupeSanguin = user?.groupe_sanguin || 'O+';
+  const groupeSanguin = user?.groupe_sanguin || "O+";
   const { alertes, loading, refresh, updateStatut } = useAlertes(groupeSanguin);
 
   const [refreshing, setRefreshing] = useState(false);
@@ -113,52 +113,56 @@ const DonorDashboard = () => {
           </View>
         )}
 
-        {alertes.map((alerte) => (
-          <View key={alerte.id} style={styles.alertCard}>
-            <View style={styles.alertHeader}>
-              <Text style={styles.alertTitle}>💉 Don de sang {user?.groupe_sanguin}</Text>
-              <Text style={styles.infoText}>
-                🏥 Hôpital : {alerte.requete.docteur.banque.nom || "Non précisé"}
-              </Text>
-              <Text style={styles.infoText}>
-                📅 Statut :{" "}
-                <Text
-                  style={[
-                    styles.statusText,
-                    alerte.statut === "accepte"
-                      ? styles.statusAccepted
-                      : alerte.statut === "refuse"
-                      ? styles.statusRefused
-                      : styles.statusPending,
-                  ]}
-                >
-                  {alerte.statut}
+        {alertes.map((alerte) => {
+          const isValide = alerte.statut === "en_attente" || alerte.statut === "accepte";
+          return (
+            <View key={alerte.id} style={styles.alertCard}>
+              <View style={styles.alertHeader}>
+                <Text style={styles.alertTitle}>💉 Don de sang {alerte.requete.groupe_sanguin}</Text>
+                <Text style={styles.infoText}>
+                  🏥 Hôpital : {alerte.requete.docteur?.banque?.nom || "Non précisé"}
                 </Text>
-              </Text>
-            </View>
+                <Text style={styles.infoText}>
+                  📅 Statut :{" "}
+                  <Text
+                    style={[
+                      styles.statusText,
+                      alerte.statut === "accepte"
+                        ? styles.statusAccepted
+                        : alerte.statut === "refuse"
+                        ? styles.statusRefused
+                        : styles.statusPending,
+                    ]}
+                  >
+                    {alerte.statut}
+                  </Text>
+                </Text>
+              </View>
 
-            <View style={styles.actionButtons}>
-              <TouchableOpacity
-                style={styles.acceptButton}
-                onPress={() => handleAccept(alerte)}
-              >
-                <Text style={styles.buttonText}>✅ Accepter</Text>
-              </TouchableOpacity>
+              {!isValide && (
+                <View style={styles.actionButtons}>
+                  <TouchableOpacity
+                    style={styles.acceptButton}
+                    onPress={() => handleAccept(alerte)}
+                  >
+                    <Text style={styles.buttonText}>✅ Accepter</Text>
+                  </TouchableOpacity>
 
-              <TouchableOpacity
-                style={styles.declineButton}
-                onPress={() => handleDecline(alerte)}
-              >
-                <Text style={styles.buttonText}>❌ Refuser</Text>
-              </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.declineButton}
+                    onPress={() => handleDecline(alerte)}
+                  >
+                    <Text style={styles.buttonText}>❌ Refuser</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
             </View>
-          </View>
-        ))}
+          );
+        })}
       </ScrollView>
     </SafeAreaView>
   );
 };
-
 
 // ---------------------------
 // STYLES
@@ -169,7 +173,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFF5F5",
   },
 
-  // HEADER
   header: {
     backgroundColor: "#C53030",
     paddingVertical: 20,
@@ -213,7 +216,6 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
 
-  // ÉTAT VIDE
   emptyState: {
     padding: 40,
     alignItems: "center",
@@ -225,7 +227,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 
-  // CARD
   alertCard: {
     backgroundColor: "#fff",
     borderRadius: 15,
@@ -251,13 +252,11 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
 
-  // STATUTS
   statusText: { fontWeight: "bold", textTransform: "capitalize" },
   statusAccepted: { color: "#38A169" },
   statusRefused: { color: "#E53E3E" },
   statusPending: { color: "#DD6B20" },
 
-  // BOUTONS
   actionButtons: {
     flexDirection: "row",
     justifyContent: "space-between",

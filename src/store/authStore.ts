@@ -37,7 +37,7 @@ const useAuthStore = create<AuthState>()(
             isLoading: false,
             error: null,
           });
-
+          console.log('user store',user)
           return user;
         } catch (error) {
           const errorMessage =
