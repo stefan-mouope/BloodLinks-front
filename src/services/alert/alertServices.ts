@@ -84,7 +84,7 @@ export class AlertService {
    */
   static async updateAlerte(id: number, data: Partial<Alerte>): Promise<Alerte> {
     try {
-      const response = await api.patch<Alerte>(`/alertes/${id}/`, data);
+      const response = await api.patch<Alerte>(`/alertes/${id}/mettre-a-jour-statut`, data);
       return response.data;
     } catch (error: any) {
       console.error("Erreur mise à jour alerte :", error?.response?.data || error.message);
