@@ -36,7 +36,7 @@ const BloodBankDashboard = () => {
   const fetchRequetes = useCallback(async () => {
     if (!user?.id) return;
     try {
-      const data: RequeteWithAlert[] = await requeteService.getByBanque(user.user.id);
+      const data: RequeteWithAlert[] = await requeteService.getByBanque(user.id);
       setRequests(data);
     } catch (error) {
       console.error('Erreur récupération       requêtes :', error);

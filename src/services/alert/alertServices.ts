@@ -80,11 +80,11 @@ export class AlertService {
   }
 
   /**
-   * 🔹 Met à jour partiellement une alerte (PATCH)
+   * 🔹 Met à jour partiellement une alerte (PATCH) bonjour je suis entrain de tester
    */
   static async updateAlerte(id: number, data: Partial<Alerte>): Promise<Alerte> {
     try {
-      const response = await api.patch<Alerte>(`/alertes/${id}/mettre-a-jour-statut`, data);
+      const response = await api.patch<Alerte>(`/alertes/${id}/mettre-a-jour-statut/`, data);
       return response.data;
     } catch (error: any) {
       console.error("Erreur mise à jour alerte :", error?.response?.data || error.message);
