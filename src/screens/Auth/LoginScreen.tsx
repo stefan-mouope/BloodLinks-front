@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Input } from '../../components/ui';
+import Header from '../../components/ui/HeaderAuth';
 import { theme } from '../../constants/theme';
 import {
   responsiveSize,
@@ -79,31 +80,21 @@ const LoginScreen = () => {
   };
 
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        backgroundColor: theme.colors.background,
-        paddingHorizontal: safeAreaPadding(theme.spacing.lg),
-      }}
-    >
-      <TouchableOpacity style={styles.backButton} onPress={handleBackFirstPage}>
-        <Text style={styles.backButtonText}>←</Text>
-      </TouchableOpacity>
+    <SafeAreaView style={styles.container}>
+      <Header
+        title="Bienvenue"
+        subtitle="Connectez-vous à votre compte"
+        onBackPress={handleBackFirstPage}
+        showBackButton={true}
+      />
+
       <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{
-          justifyContent: 'space-between',
-          paddingBottom: responsiveSize(theme.spacing.xl),
-        }}
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        <View>
-          <Text style={styles.welcomeText}>Bienvenue</Text>
-          <Text style={styles.subtitle}>Connectez-vous à votre compte</Text>
-        </View>
-
-        <View>
+        <View style={styles.formContainer}>
           <Input
             label="Email"
             placeholder="Entrez votre email"
@@ -146,35 +137,39 @@ const LoginScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  welcomeText: {
-    fontSize: theme.typography.fontSize['2xl'],
-    fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.textPrimary,
-    marginBottom: theme.spacing.sm,
-    textAlign: 'center',
+  container: {
+    flex: 1,
+    backgroundColor: theme.colors.background,
+    paddingHorizontal: safeAreaPadding(theme.spacing.lg),
   },
-  subtitle: {
-    fontSize: theme.typography.fontSize.base,
-    color: theme.colors.textSecondary,
-    marginBottom: theme.spacing.xl,
-    textAlign: 'center',
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    // justifyContent: 'center',
+    marginTop: responsiveSize(theme.spacing.md),
+    paddingBottom: responsiveSize(theme.spacing.xl),
+  },
+  formContainer: {
+    width: '100%',
   },
   buttonContainer: {
-    paddingVertical: theme.spacing.md,
+    paddingVertical: responsiveSize(theme.spacing.md),
   },
   signupContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: theme.spacing.md,
+    marginTop: responsiveSize(theme.spacing.md),
   },
   signupText: {
     color: theme.colors.textSecondary,
-    fontSize: theme.typography.fontSize.base,
+    fontSize: responsiveFontSize(theme.typography.fontSize.base),
   },
   signupLink: {
     color: theme.colors.primary,
-    fontSize: theme.typography.fontSize.base,
+    fontSize: responsiveFontSize(theme.typography.fontSize.base),
     fontWeight: theme.typography.fontWeight.semiBold,
   },
   errorText: {
@@ -183,16 +178,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: responsiveSize(theme.spacing.md),
     paddingHorizontal: responsiveSize(theme.spacing.md),
-  },
-  backButton: {
-    position: 'absolute',
-    top: 10,
-    left: 10,
-    padding: 10,
-  },
-  backButtonText: {
-    fontSize: 24,
-    color: theme.colors.primary,
   },
 });
 

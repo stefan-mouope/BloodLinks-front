@@ -2,19 +2,30 @@ import axios, { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 import { Platform } from 'react-native';
 import useAuthStore from '../store/authStore';
 
-// Utilisez l'adresse IP locale pour le développement sur émulateur Android/iOS
+// Détermine l'URL de base selon l'environnement
 const getBaseURL = () => {
   if (__DEV__) {
     if (Platform.OS === 'android') {
-
       return 'http://10.0.2.2:8000/api/'; // Émulateur Android
     }
-    // Pour ton téléphone physique
-    return 'http://192.168.209.150:8000/api/';
+    return 'http://192.168.209.150:8000/api/'; // Téléphone physique
   }
-
   return 'https://bloodlinks.onrender.com/api/';
 };
+
+// Routes publiques (accessibles sans token et sans refresh)
+const PUBLIC_ROUTES = [
+  '/login',
+  '/register',
+  '/refresh', 
+  '/banques'
+];
+
+// Vérifie si une URL correspond à une route publique
+const isPublicRoute = (url: string): boolean => {
+  return PUBLIC_ROUTES.some((route) => url.includes(route));
+};
+
 // Création de l'instance Axios
 const api: AxiosInstance = axios.create({
   baseURL: getBaseURL(),
@@ -25,49 +36,55 @@ const api: AxiosInstance = axios.create({
   },
 });
 
-// Intercepteur pour ajouter le token d'authentification
+// Intercepteur REQUEST → ajoute le token SAUF pour les routes publiques
 api.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
-    const { accessToken } = useAuthStore.getState();
-    console.log('acces yokrn',accessToken)
-    
-    if (accessToken) {
-      config.headers.Authorization = `Bearer ${accessToken}`;
+    // Ne pas ajouter le token pour les routes publiques
+    if (!isPublicRoute(config.url || '')) {
+      const { accessToken } = useAuthStore.getState();
+      console.log('Access Token utilisé :', accessToken);
+      
+      if (accessToken) {
+        config.headers.Authorization = `Bearer ${accessToken}`;
+      }
     }
     
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Intercepteur pour gérer les erreurs globales
+// Intercepteur RESPONSE → gère les erreurs et le refresh
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    
-    // Si l'erreur est 401 (non autorisé) et que ce n'est pas une tentative de rafraîchissement
+
+    // 🔥 1. Ne PAS tenter de refresh pour les routes publiques
+    if (isPublicRoute(originalRequest.url || '')) {
+      return Promise.reject(error);
+    }
+
+    // 🔥 2. Si erreur 401 et pas encore retry → faire refresh
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      
+
       try {
         const { refreshAccessToken } = useAuthStore.getState();
         const newAccessToken = await refreshAccessToken();
-        
+
         if (newAccessToken) {
-          // Réessayer la requête originale avec le nouveau token
+          // Réinjecter le nouveau token
           originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-          return api(originalRequest);
+          return api(originalRequest); // Rejoue la requête
         }
       } catch (refreshError) {
-        // En cas d'erreur de rafraîchissement, déconnecter l'utilisateur
+        // Si refresh échoue → déconnexion
         useAuthStore.getState().logout();
         return Promise.reject(refreshError);
       }
     }
-    
+
     return Promise.reject(error);
   }
 );

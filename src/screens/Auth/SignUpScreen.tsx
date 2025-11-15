@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Input, RoleSelector, BloodTypeSelector, BankSelector } from '../../components/ui';
+import Header from '../../components/ui/HeaderAuth';
 import { theme } from '../../constants/theme';
 import { SignUpFormData, RoleType, BloodType } from '../../types/auth';
 import { responsiveSize, responsiveFontSize, safeAreaPadding } from '../../utils/responsive';
@@ -28,7 +29,7 @@ const SignUpScreen: React.FC = () => {
   useNotification(user?.id || null);
 
   const [formData, setFormData] = useState<SignUpFormData>({
-    user_type: null,
+    user_type: 'donneur',
     email: '',
     password: '',
     // Champs docteur
@@ -141,166 +142,198 @@ const SignUpScreen: React.FC = () => {
     }
   };
 
-  const getContainerStyle = () => ({
-    flex: 1,
-    backgroundColor: theme.colors.background,
-    paddingHorizontal: safeAreaPadding(theme.spacing.lg),
-  });
+  const handleBackPress = () => {
+    navigation.goBack();
+  };
 
-  const getFormStyle = () => ({ flex: 1 });
-
-  const getFormContentStyle = () => ({
-    justifyContent: 'space-between' as const,
-    paddingBottom: responsiveSize(theme.spacing.xl),
-  });
-
-  const getErrorStyle = () => ({
-    fontSize: responsiveFontSize(theme.typography.fontSize.sm),
-    color: theme.colors.error,
-    textAlign: 'center' as const,
-    marginBottom: responsiveSize(theme.spacing.md),
-    paddingHorizontal: responsiveSize(theme.spacing.md),
-  });
+  const getRoleSubtitle = () => {
+    switch (formData.user_type) {
+      case 'docteur':
+        return 'Créez votre compte médecin';
+      case 'banque':
+        return 'Créez votre compte banque de sang';
+      case 'donneur':
+        return 'Créez votre compte donneur';
+      default:
+        return 'Choisissez votre type de compte';
+    }
+  };
 
   return (
-    <SafeAreaView style={getContainerStyle()}>
+    <SafeAreaView style={styles.container}>
+      <Header
+        title="Inscription"
+        subtitle={getRoleSubtitle()}
+        onBackPress={handleBackPress}
+        showBackButton={true}
+      />
+
       <ScrollView
-        style={getFormStyle()}
-        contentContainerStyle={getFormContentStyle()}
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        <RoleSelector selectedRole={formData.user_type} onRoleSelect={handleRoleSelect} />
-        {errors.user_type && <Text style={getErrorStyle()}>{errors.user_type}</Text>}
+        <View style={styles.formContainer}>
+          <RoleSelector selectedRole={formData.user_type} onRoleSelect={handleRoleSelect} />
+          {errors.user_type && <Text style={styles.errorText}>{errors.user_type}</Text>}
 
-        {/* Docteur */}
-        {formData.user_type === 'docteur' && (
-          <>
-            <Input
-              label="Nom"
-              placeholder="Entrez votre nom"
-              value={formData.nom}
-              onChangeText={(value) => handleInputChange('nom', value)}
-              error={errors.nom}
-            />
-            <Input
-              label="Prénom"
-              placeholder="Entrez votre prénom"
-              value={formData.prenom}
-              onChangeText={(value) => handleInputChange('prenom', value)}
-              error={errors.prenom}
-            />
-            <Input
-              label="Code d'inscription"
-              placeholder="Entrez votre code (doit finir par DOC)"
-              value={formData.code_inscription}
-              onChangeText={(value) => handleInputChange('code_inscription', value)}
-              error={errors.code_inscription}
-            />
-            <BankSelector selectedBankId={formData.BanqueDeSang || null} onBankSelect={handleBankSelect} />
-            {errors.BanqueDeSang && <Text style={getErrorStyle()}>{errors.BanqueDeSang}</Text>}
-          </>
-        )}
+          {/* Docteur */}
+          {formData.user_type === 'docteur' && (
+            <>
+              <Input
+                label="Nom"
+                placeholder="Entrez votre nom"
+                value={formData.nom}
+                onChangeText={(value) => handleInputChange('nom', value)}
+                error={errors.nom}
+              />
+              <Input
+                label="Prénom"
+                placeholder="Entrez votre prénom"
+                value={formData.prenom}
+                onChangeText={(value) => handleInputChange('prenom', value)}
+                error={errors.prenom}
+              />
+              <Input
+                label="Code d'inscription"
+                placeholder="Entrez votre code "
+                value={formData.code_inscription}
+                onChangeText={(value) => handleInputChange('code_inscription', value)}
+                error={errors.code_inscription}
+              />
+              <BankSelector selectedBankId={formData.BanqueDeSang || null} onBankSelect={handleBankSelect} />
+              {errors.BanqueDeSang && <Text style={styles.errorText}>{errors.BanqueDeSang}</Text>}
+            </>
+          )}
 
-        {/* Banque */}
-        {formData.user_type === 'banque' && (
-          <>
-            <Input
-              label="Nom de la banque"
-              placeholder="Entrez le nom de la banque"
-              value={formData.nom}
-              onChangeText={(value) => handleInputChange('nom', value)}
-              error={errors.nom}
-            />
-            <Input
-              label="Localisation"
-              placeholder="Entrez la localisation"
-              value={formData.localisation}
-              onChangeText={(value) => handleInputChange('localisation', value)}
-              error={errors.localisation}
-            />
-            <Input
-              label="Code d'inscription"
-              placeholder="Entrez votre code (doit finir par BANC)"
-              value={formData.code_inscription}
-              onChangeText={(value) => handleInputChange('code_inscription', value)}
-              error={errors.code_inscription}
-            />
-          </>
-        )}
+          {/* Banque */}
+          {formData.user_type === 'banque' && (
+            <>
+              <Input
+                label="Nom de la banque"
+                placeholder="Entrez le nom de la banque"
+                value={formData.nom}
+                onChangeText={(value) => handleInputChange('nom', value)}
+                error={errors.nom}
+              />
+              <Input
+                label="Localisation"
+                placeholder="Entrez la localisation"
+                value={formData.localisation}
+                onChangeText={(value) => handleInputChange('localisation', value)}
+                error={errors.localisation}
+              />
+              <Input
+                label="Code d'inscription"
+                placeholder="Entrez votre code "
+                value={formData.code_inscription}
+                onChangeText={(value) => handleInputChange('code_inscription', value)}
+                error={errors.code_inscription}
+              />
+            </>
+          )}
 
-        {/* Donneur */}
-        {formData.user_type === 'donneur' && (
-          <>
-            <Input
-              label="Nom"
-              placeholder="Entrez votre nom"
-              value={formData.nom}
-              onChangeText={(value) => handleInputChange('nom', value)}
-              error={errors.nom}
-            />
-            <Input
-              label="Prénom"
-              placeholder="Entrez votre prénom"
-              value={formData.prenom}
-              onChangeText={(value) => handleInputChange('prenom', value)}
-              error={errors.prenom}
-            />
-            <BloodTypeSelector selectedBloodType={formData.groupe_sanguin || null} onBloodTypeSelect={handleBloodTypeSelect} />
-            {errors.groupe_sanguin && <Text style={getErrorStyle()}>{errors.groupe_sanguin}</Text>}
-          </>
-        )}
+          {/* Donneur */}
+          {formData.user_type === 'donneur' && (
+            <>
+              <Input
+                label="Nom"
+                placeholder="Entrez votre nom"
+                value={formData.nom}
+                onChangeText={(value) => handleInputChange('nom', value)}
+                error={errors.nom}
+              />
+              <Input
+                label="Prénom"
+                placeholder="Entrez votre prénom"
+                value={formData.prenom}
+                onChangeText={(value) => handleInputChange('prenom', value)}
+                error={errors.prenom}
+              />
+              <BloodTypeSelector selectedBloodType={formData.groupe_sanguin || null} onBloodTypeSelect={handleBloodTypeSelect} />
+              {errors.groupe_sanguin && <Text style={styles.errorText}>{errors.groupe_sanguin}</Text>}
+            </>
+          )}
 
-        {/* Email & Mot de passe */}
-        <Input
-          label="Email"
-          placeholder="Entrez votre email"
-          value={formData.email}
-          onChangeText={(value) => handleInputChange('email', value)}
-          keyboardType="email-address"
-          autoCapitalize="none"
-          error={errors.email}
-        />
-        <Input
-          label="Mot de passe"
-          placeholder="Entrez votre mot de passe"
-          value={formData.password}
-          onChangeText={(value) => handleInputChange('password', value)}
-          secureTextEntry
-          error={errors.password}
-        />
+          {/* Email & Mot de passe */}
+          <Input
+            label="Email"
+            placeholder="Entrez votre email"
+            value={formData.email}
+            onChangeText={(value) => handleInputChange('email', value)}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            error={errors.email}
+          />
+          <Input
+            label="Mot de passe"
+            placeholder="Entrez votre mot de passe"
+            value={formData.password}
+            onChangeText={(value) => handleInputChange('password', value)}
+            secureTextEntry
+            error={errors.password}
+          />
 
-        {authError && <Text style={getErrorStyle()}>{authError}</Text>}
+          {authError && <Text style={styles.errorText}>{authError}</Text>}
+        </View>
       </ScrollView>
 
-      <View style={{ paddingBottom: safeAreaPadding(theme.spacing.lg) }}>
+      <View style={styles.bottomContainer}>
         <Button title="S'inscrire" onPress={handleSubmit} loading={isLoading} fullWidth size="lg" />
-      </View>
-
-      <View style={styles.signupContainer}>
-        <Text style={styles.signupText}>Vous avez déjà un compte ? </Text>
-        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-          <Text style={styles.signupLink}>Se connecter</Text>
-        </TouchableOpacity>
+        
+        <View style={styles.loginContainer}>
+          <Text style={styles.loginText}>Vous avez déjà un compte ? </Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+            <Text style={styles.loginLink}>Se connecter</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  signupContainer: {
+  container: {
+    flex: 1,
+    backgroundColor: theme.colors.background,
+    paddingHorizontal: safeAreaPadding(theme.spacing.lg),
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: responsiveSize(theme.spacing.md),
+  },
+  formContainer: {
+    width: '100%',
+  },
+  bottomContainer: {
+    paddingBottom: safeAreaPadding(theme.spacing.lg),
+    paddingTop: responsiveSize(theme.spacing.md),
+  },
+  loginContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: responsiveSize(theme.spacing.md),
   },
-  signupText: {
+  loginText: {
     color: theme.colors.textSecondary,
-    fontSize: theme.typography.fontSize.base,
+    fontSize: responsiveFontSize(theme.typography.fontSize.base),
   },
-  signupLink: {
+  loginLink: {
     color: theme.colors.primary,
-    fontSize: theme.typography.fontSize.base,
+    fontSize: responsiveFontSize(theme.typography.fontSize.base),
     fontWeight: theme.typography.fontWeight.semiBold,
+  },
+  errorText: {
+    fontSize: responsiveFontSize(theme.typography.fontSize.sm),
+    color: theme.colors.error,
+    textAlign: 'center',
+    marginBottom: responsiveSize(theme.spacing.md),
+    paddingHorizontal: responsiveSize(theme.spacing.md),
   },
 });
 

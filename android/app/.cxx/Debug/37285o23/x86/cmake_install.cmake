@@ -49,6 +49,7 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   include("/home/lavue/Dev/js/React Native/BloodLinks-front/android/app/.cxx/Debug/37285o23/x86/rngesturehandler_codegen_autolinked_build/cmake_install.cmake")
   include("/home/lavue/Dev/js/React Native/BloodLinks-front/android/app/.cxx/Debug/37285o23/x86/safeareacontext_autolinked_build/cmake_install.cmake")
   include("/home/lavue/Dev/js/React Native/BloodLinks-front/android/app/.cxx/Debug/37285o23/x86/rnscreens_autolinked_build/cmake_install.cmake")
+  include("/home/lavue/Dev/js/React Native/BloodLinks-front/android/app/.cxx/Debug/37285o23/x86/rnsvg_autolinked_build/cmake_install.cmake")
 
 endif()
 
