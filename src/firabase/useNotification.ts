@@ -11,18 +11,19 @@ export default function useNotification(userId: number | null) {
       const notificationService = new NotificationService();
 
       try {
+         await notificationService.requestPermission();
         // Demander la permission notifications
-        if (Platform.OS === 'android') {
-          const granted = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
-          );
-          if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-            console.log('❌ Permission notifications refusée');
-            return;
-          }
-        } else {
-          await notificationService.requestPermission();
-        }
+      //   if (Platform.OS === 'android') {
+      //     const granted = await PermissionsAndroid.request(
+      //       PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+      //     );
+      //     if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+      //       console.log('❌ Permission notifications refusée');
+      //       return;
+      //     }
+      //   } else {
+      //     await notificationService.requestPermission();
+      //   }
       } catch (error) {
         console.error('Erreur permission notifications :', error);
         return;

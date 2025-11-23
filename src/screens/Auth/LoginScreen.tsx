@@ -28,9 +28,9 @@ const LoginScreen = () => {
   const navigation = useNavigation<LoginScreenNavigationProp>();
   const { login, isLoading, error: authError, user } = useAuthStore();
 
+  console.log(user)
   // 🔹 Hook pour envoyer automatiquement le token FCM dès que l'utilisateur est connecté
   useNotification(user?.id || null);
-
   const [formData, setFormData] = useState({
     email: '',
     password: '',

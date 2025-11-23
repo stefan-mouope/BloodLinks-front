@@ -4,12 +4,12 @@ import useAuthStore from '../store/authStore';
 
 // Détermine l'URL de base selon l'environnement
 const getBaseURL = () => {
-  if (__DEV__) {
-    if (Platform.OS === 'android') {
-      return 'http://10.0.2.2:8000/api/'; // Émulateur Android
-    }
-    return 'http://192.168.209.150:8000/api/'; // Téléphone physique
-  }
+  // if (__DEV__) {
+  //   if (Platform.OS === 'android') {
+  //     return 'http://10.0.2.2:8000/api/'; // Émulateur Android
+  //   }
+  //   return 'http://192.168.0.106:8000/api/'; // Téléphone physique
+  // }
   return 'https://bloodlinks.onrender.com/api/';
 };
 

@@ -41,10 +41,10 @@ export class NotificationService implements INotificationService {
       const storedToken = await getAuthToken();
 
       // Si le token est déjà envoyé, on ne renvoie rien
-      if (storedToken === token) {
-        console.log(' Token déjà enregistré, pas besoin de renvoyer');
-        return;
-      }
+      // if (storedToken === token) {
+      //   console.log(' Token déjà enregistré, pas besoin de renvoyer');
+      //   return;
+      // }
 
       await api.post('/notifications/fcm-tokens/', {
         user: userId ?? undefined,
