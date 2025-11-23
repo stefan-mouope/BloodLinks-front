@@ -50,7 +50,7 @@ export class AlertService {
   /**
      * 🔹 Récupère les alertes envoyées pour une banque spécifique
      */
-    static async getAlertesEnvoyeesParBanque(banqueId: number): Promise<Alerte[]> {
+    static async  getAlertesEnvoyeesParBanque(banqueId: number): Promise<Alerte[]> {
       try {
         const response = await api.get<Alerte[]>("/alertes/banque/", {
           params: { banque_id: banqueId },

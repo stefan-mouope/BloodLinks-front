@@ -34,6 +34,8 @@ const DoctorPage = () => {
 
   useEffect(() => {
     fetchRequests();
+    const interval = setInterval(fetchRequests, 10000)
+    return ()=> clearInterval(interval)
   }, []);
 
   const getStatusColor = (status: string) => {

@@ -46,6 +46,8 @@ const BloodBankDashboard = () => {
 
   useEffect(() => {
     fetchRequetes();
+    const interval= setInterval(fetchRequetes, 10000)
+    return ()=>clearInterval(interval)
   }, [fetchRequetes]);
 
   // === Gestion des notifications push ===
