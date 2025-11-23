@@ -62,13 +62,13 @@ const Header: React.FC<HeaderProps> = ({
       </View>
 
       {/* Bouton retour */}
-      {showBackButton && onBackPress && (
+      {/* {showBackButton && onBackPress && (
         <TouchableOpacity style={styles.backButton} onPress={onBackPress}>
           <View style={styles.backButtonCircle}>
             <Text style={styles.backButtonText}>←</Text>
           </View>
         </TouchableOpacity>
-      )}
+      )} */}
       
       {/* Contenu du header */}
       <View style={styles.contentContainer}>
