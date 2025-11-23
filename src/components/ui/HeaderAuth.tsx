@@ -62,13 +62,13 @@ const Header: React.FC<HeaderProps> = ({
       </View>
 
       {/* Bouton retour */}
-      {showBackButton && onBackPress && (
+      {/* {showBackButton && onBackPress && (
         <TouchableOpacity style={styles.backButton} onPress={onBackPress}>
           <View style={styles.backButtonCircle}>
             <Text style={styles.backButtonText}>←</Text>
           </View>
         </TouchableOpacity>
-      )}
+      )} */}
       
       {/* Contenu du header */}
       <View style={styles.contentContainer}>
@@ -119,18 +119,18 @@ const Header: React.FC<HeaderProps> = ({
 const styles = StyleSheet.create({
   container: {
     paddingTop: responsiveSize(theme.spacing.md),
-    paddingBottom: responsiveSize(theme.spacing.lg),
+    paddingBottom: responsiveSize(theme.spacing.sm),
     position: 'relative',
     overflow: 'hidden',
-    minHeight: responsiveSize(180),
+    minHeight: responsiveSize(160),
   },
   bloodDropBackground: {
     position: 'absolute',
-    top: -50,
+    top: -12,
     left: '50%',
-    marginLeft: -150,
-    width: 300,
-    height: 300,
+    marginLeft: -100,
+    width: 200,
+    height: 200,
     opacity: 0.9,
   },
   backButton: {

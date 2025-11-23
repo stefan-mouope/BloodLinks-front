@@ -1,0 +1,1 @@
+/home/mouope/Documents/Master 1/TPINF4057/BloodLinks-front/android/app/build/intermediates/cxx/RelWithDebInfo/4y2t1j6h/obj/x86_64
