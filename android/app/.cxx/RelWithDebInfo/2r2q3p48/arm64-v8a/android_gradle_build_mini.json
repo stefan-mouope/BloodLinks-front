@@ -5,6 +5,7 @@
     "/home/lavue/Dev/js/React Native/BloodLinks-front/node_modules/react-native-gesture-handler/android/build/generated/source/codegen/jni/CMakeLists.txt",
     "/home/lavue/Dev/js/React Native/BloodLinks-front/node_modules/react-native-safe-area-context/android/src/main/jni/CMakeLists.txt",
     "/home/lavue/Dev/js/React Native/BloodLinks-front/node_modules/react-native-screens/android/src/main/jni/CMakeLists.txt",
+    "/home/lavue/Dev/js/React Native/BloodLinks-front/node_modules/react-native-svg/android/src/main/jni/CMakeLists.txt",
     "/home/lavue/Dev/js/React Native/BloodLinks-front/node_modules/react-native/ReactAndroid/cmake-utils/default-app-setup/CMakeLists.txt"
   ],
   "cleanCommandsComponents": [
@@ -55,6 +56,16 @@
         "/home/lavue/.gradle/caches/9.0.0/transforms/65b450ef598dce09a7a393e5d7e99f2c/transformed/fbjni-0.7.0/prefab/modules/fbjni/libs/android.arm64-v8a/libfbjni.so",
         "/home/lavue/.gradle/caches/9.0.0/transforms/bbabc4355c892ff332a4d181ef2926ba/transformed/react-android-0.82.1-release/prefab/modules/jsi/libs/android.arm64-v8a/libjsi.so",
         "/home/lavue/.gradle/caches/9.0.0/transforms/bbabc4355c892ff332a4d181ef2926ba/transformed/react-android-0.82.1-release/prefab/modules/reactnative/libs/android.arm64-v8a/libreactnative.so"
+      ]
+    },
+    "react_codegen_rnsvg::@4f40eb209d0c0b4a3b65": {
+      "artifactName": "react_codegen_rnsvg",
+      "abi": "arm64-v8a",
+      "output": "/home/lavue/Dev/js/React Native/BloodLinks-front/android/app/build/intermediates/cxx/RelWithDebInfo/2r2q3p48/obj/arm64-v8a/libreact_codegen_rnsvg.so",
+      "runtimeFiles": [
+        "/home/lavue/.gradle/caches/9.0.0/transforms/bbabc4355c892ff332a4d181ef2926ba/transformed/react-android-0.82.1-release/prefab/modules/reactnative/libs/android.arm64-v8a/libreactnative.so",
+        "/home/lavue/.gradle/caches/9.0.0/transforms/bbabc4355c892ff332a4d181ef2926ba/transformed/react-android-0.82.1-release/prefab/modules/jsi/libs/android.arm64-v8a/libjsi.so",
+        "/home/lavue/.gradle/caches/9.0.0/transforms/65b450ef598dce09a7a393e5d7e99f2c/transformed/fbjni-0.7.0/prefab/modules/fbjni/libs/android.arm64-v8a/libfbjni.so"
       ]
     },
     "react_codegen_rnasyncstorage::@1596841e19ec5b9eeffe": {

@@ -5,6 +5,7 @@
     "/home/lavue/Dev/js/React Native/BloodLinks-front/node_modules/react-native-gesture-handler/android/build/generated/source/codegen/jni/CMakeLists.txt",
     "/home/lavue/Dev/js/React Native/BloodLinks-front/node_modules/react-native-safe-area-context/android/src/main/jni/CMakeLists.txt",
     "/home/lavue/Dev/js/React Native/BloodLinks-front/node_modules/react-native-screens/android/src/main/jni/CMakeLists.txt",
+    "/home/lavue/Dev/js/React Native/BloodLinks-front/node_modules/react-native-svg/android/src/main/jni/CMakeLists.txt",
     "/home/lavue/Dev/js/React Native/BloodLinks-front/node_modules/react-native/ReactAndroid/cmake-utils/default-app-setup/CMakeLists.txt"
   ],
   "cleanCommandsComponents": [
@@ -59,6 +60,17 @@
       "abi": "armeabi-v7a",
       "artifactName": "react_codegen_rnscreens",
       "output": "/home/lavue/Dev/js/React Native/BloodLinks-front/android/app/build/intermediates/cxx/RelWithDebInfo/2r2q3p48/obj/armeabi-v7a/libreact_codegen_rnscreens.so",
+      "runtimeFiles": [
+        "/home/lavue/.gradle/caches/9.0.0/transforms/bbabc4355c892ff332a4d181ef2926ba/transformed/react-android-0.82.1-release/prefab/modules/reactnative/libs/android.armeabi-v7a/libreactnative.so",
+        "/home/lavue/.gradle/caches/9.0.0/transforms/bbabc4355c892ff332a4d181ef2926ba/transformed/react-android-0.82.1-release/prefab/modules/jsi/libs/android.armeabi-v7a/libjsi.so",
+        "/home/lavue/.gradle/caches/9.0.0/transforms/65b450ef598dce09a7a393e5d7e99f2c/transformed/fbjni-0.7.0/prefab/modules/fbjni/libs/android.armeabi-v7a/libfbjni.so"
+      ]
+    },
+    "react_codegen_rnsvg::@4f40eb209d0c0b4a3b65": {
+      "toolchain": "toolchain",
+      "abi": "armeabi-v7a",
+      "artifactName": "react_codegen_rnsvg",
+      "output": "/home/lavue/Dev/js/React Native/BloodLinks-front/android/app/build/intermediates/cxx/RelWithDebInfo/2r2q3p48/obj/armeabi-v7a/libreact_codegen_rnsvg.so",
       "runtimeFiles": [
         "/home/lavue/.gradle/caches/9.0.0/transforms/bbabc4355c892ff332a4d181ef2926ba/transformed/react-android-0.82.1-release/prefab/modules/reactnative/libs/android.armeabi-v7a/libreactnative.so",
         "/home/lavue/.gradle/caches/9.0.0/transforms/bbabc4355c892ff332a4d181ef2926ba/transformed/react-android-0.82.1-release/prefab/modules/jsi/libs/android.armeabi-v7a/libjsi.so",
