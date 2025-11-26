@@ -114,7 +114,7 @@ const DonorDashboard = () => {
         )}
 
         {alertes.map((alerte) => {
-          const isValide = alerte.statut === "en_attente" || alerte.statut === "accepte";
+          const isValide = alerte.statut != "en_attente" ;
           return (
             <View key={alerte.id} style={styles.alertCard}>
               <View style={styles.alertHeader}>
